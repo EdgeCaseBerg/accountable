@@ -1,0 +1,6 @@
+CREATE TABLE expenses (
+	amountInCents INT(16) UNSIGNED NOT NULL,
+	name VARCHAR(512) NOT NULL,
+	dateOccured DATE NOT NULL,
+	expenseId CHAR(36) NOT NULL PRIMARY KEY
+) ENGINE InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE='utf8mb4_unicode_ci';
