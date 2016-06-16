@@ -1,5 +1,6 @@
 import play.PlayImport.PlayKeys.playRunHooks
 import scalariform.formatter.preferences._
+import com.typesafe.config._
 
 organization := "com.github.edgecaseberg"
 
@@ -31,3 +32,17 @@ scalariformPreferences := scalariformPreferences.value
   .setPreference(AlignParameters, false)
   .setPreference(IndentWithTabs, true)
   .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
+
+val confFileName = System.getProperty("config.file", "conf/application.conf")
+
+val conf = ConfigFactory.parseFile(new File(confFileName)).resolve()
+
+flywayUrl :=  conf.getString("db.url")
+
+flywayUser := conf.getString("db.user")
+
+flywayPassword := conf.getString("db.password")
+
+flywayDriver := "com.mysql.jdbc.Driver"
+
+flywayLocations := Seq("filesystem:conf/db/migration")
