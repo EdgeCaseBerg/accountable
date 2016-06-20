@@ -25,7 +25,7 @@ trait ExpensesDAO {
 
 	/** Lists the expenses that took place during the same week as the given Instant
 	 *
-	 *  See [utils.TimeUtils] (This has not been created yet) for how an instant is
+	 *  See [[utils.TimeUtils]] (This has not been created yet) for how an instant is
 	 *  converted to a week period.
 	 *
 	 *  @param epochInstant An instance in time that falls in the same week as the one you want expenses for
@@ -35,7 +35,7 @@ trait ExpensesDAO {
 
 	/** Lists the expenses that took place during the same week as the given instance, keyed in a map by their group
 	 *
-	 *  See [utils.TimeUtils] (This has not been created yet) for how an instant is
+	 *  See [[utils.TimeUtils]] (This has not been created yet) for how an instant is
 	 *  converted to a week period.
 	 *
 	 *  @param epochInstant An instance in time that falls in the same week as the one you want expenses for
