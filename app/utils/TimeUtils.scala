@@ -16,4 +16,15 @@ object TimeUtils {
 		Instant.now()
 	}
 
+	/** Implicit to quickly convert a long into an Instant value
+	 *
+	 *  @param long The Long to convert by calling #toInstant on it
+	 */
+	implicit class LongAsInstant(long: Long) {
+		/** Convert a long into an Instant instance
+		 *  @return An Instant based on interpretting the given long as an epoch time
+		 */
+		def toInstant = Instant.ofEpochSecond(long)
+	}
+
 }
