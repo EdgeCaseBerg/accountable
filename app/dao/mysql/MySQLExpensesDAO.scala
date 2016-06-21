@@ -9,7 +9,6 @@ import java.time.Instant
 class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector) extends ExpensesDAO {
 
 	/** @inheritdoc
-	 *
 	 */
 	def createNewExpense(expense: Expense): Future[Unit] = ???
 
