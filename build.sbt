@@ -47,4 +47,4 @@ flywayDriver := "com.mysql.jdbc.Driver"
 
 flywayLocations := Seq("filesystem:conf/db/migration")
 
-javaOptions in Test += "-Dconfig.file=test/application.conf"
+javaOptions in Test += "-Dconfig.file=conf/test.conf"
