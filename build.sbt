@@ -23,7 +23,8 @@ libraryDependencies ++= Seq(
     "com.zaxxer" % "HikariCP" % "2.4.5",
     "org.scalikejdbc" %% "scalikejdbc" % "2.2.+",
     "mysql" % "mysql-connector-java" % "5.1.+",
-    "org.flywaydb" % "flyway-core" % "4.0"
+    "org.flywaydb" % "flyway-core" % "4.0",
+    "com.github.pathikrit" %% "better-files" % "2.16.0"
 )
 
 scalariformPreferences := scalariformPreferences.value
