@@ -5,7 +5,8 @@ import org.scalatest._
 import org.scalatest.concurrent._
 import org.scalatest.time.{ Millis, Seconds, Span }
 import org.flywaydb.core.Flyway
-import java.io.File
+import better.files._
+import java.io.{ File => JFile }
 import dao.mysql._
 
 trait MigratedAndCleanDatabase extends FlatSpec with Matchers with BeforeAndAfterAll with ScalaFutures {
@@ -18,9 +19,25 @@ trait MigratedAndCleanDatabase extends FlatSpec with Matchers with BeforeAndAfte
 	lazy val databasePassword = testConf.getString("db.password")
 
 	/** Override this if you need to load a file for a test for fixtures */
-	val flywayLocations = Seq[String]("filesystem:conf/db/migration")
+	var flywayLocations = Seq[String]("filesystem:conf/db/migration")
 
 	lazy private val flyway = new Flyway();
+
+	/** Moves a migration script into a temporary folder for Flyway to use it
+	 *
+	 *  @param pathToScript The file path to the script that should be prepared for loading into Flyway
+	 */
+	def addSQLScriptForFlywayToLoad(pathToScript: String) {
+		val fileName = pathToScript.split("/").last
+		if (!fileName.startsWith(flyway.getSqlMigrationPrefix()) && !fileName.startsWith(flyway.getRepeatableSqlMigrationPrefix())) {
+			note(s"$pathToScript does not appear to be a flyway migration!")
+		}
+		val file = pathToScript.toFile
+		val tempDir = File.newTemporaryDirectory()
+		val tempFile = tempDir / fileName
+		file.copyTo(tempFile)
+		flywayLocations ++= Seq(tempDir.pathAsString)
+	}
 
 	lazy val mySqlConnection = new MySQLConnector(MySQLDatabaseParameters(
 		databaseUrl,
