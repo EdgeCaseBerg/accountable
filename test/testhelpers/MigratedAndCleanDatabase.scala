@@ -2,10 +2,15 @@ package testhelpers
 
 import com.typesafe.config._
 import org.scalatest._
+import org.scalatest.concurrent._
+import org.scalatest.time.{ Millis, Seconds, Span }
 import org.flywaydb.core.Flyway
 import java.io.File
+import dao.mysql._
 
-trait MigratedAndCleanDatabase extends FlatSpec with Matchers with BeforeAndAfterAll {
+trait MigratedAndCleanDatabase extends FlatSpec with Matchers with BeforeAndAfterAll with ScalaFutures {
+
+	implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(500, Millis))
 
 	lazy val testConf = ConfigFactory.load()
 	lazy val databaseUrl = testConf.getString("db.url")
@@ -16,6 +21,12 @@ trait MigratedAndCleanDatabase extends FlatSpec with Matchers with BeforeAndAfte
 	val flywayLocations = Seq[String]("filesystem:conf/db/migration")
 
 	lazy private val flyway = new Flyway();
+
+	lazy val mySqlConnection = new MySQLConnector(MySQLDatabaseParameters(
+		databaseUrl,
+		databaseUser,
+		databasePassword
+	), new SQLToDomainExceptonMapper())
 
 	/** If you need to do your own beforeAll work after mixing this in be sure to call
 	 *  {{super.beforeAll}}
