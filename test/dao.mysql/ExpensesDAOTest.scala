@@ -13,6 +13,8 @@ class ExpensesDAOTest extends testhelpers.MigratedAndCleanDatabase {
 
 	val myTestExpense = Expense(amountInCents = 100, name = "Test Expense", dateOccured = 1467083533)
 
+	addSQLScriptForFlywayToLoad("conf/db/testFixtures/R__ExpensesDAOTestFixtures.sql")
+
 	"The ExpensesDAO" should "create a new Expense" in {
 		whenReady(expensesDAO.createNewExpense(myTestExpense)) { unit =>
 			assert(true)
