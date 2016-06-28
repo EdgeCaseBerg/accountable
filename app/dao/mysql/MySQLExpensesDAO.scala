@@ -4,7 +4,8 @@ import dao._
 import models.domain._
 import scala.concurrent.{ Future, future, ExecutionContext }
 import javax.inject.Inject
-import java.time.Instant
+import java.time._
+import java.time.format.DateTimeFormatter
 import anorm._
 
 class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit executionContext: ExecutionContext) extends ExpensesDAO {
@@ -14,15 +15,19 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	def createNewExpense(expense: Expense): Future[Unit] = {
 		val insertOperation = future {
 			mysqlConnector.withTransaction { implicit connection =>
-				val possibleNewId = SQL(
+				val localTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(expense.dateOccured), ZoneId.systemDefault)
+				val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
+				val numberOfInsertedRow = SQL(
 					"""INSERT INTO expenses (amountInCents,name,dateOccured,expenseId) VALUES ({amountInCents}, {name}, {dateOccured}, expenseId)"""
 				).on(
 						"amountInCents" -> expense.amountInCents,
 						"name" -> expense.name,
-						"dateOccured" -> expense.dateOccured,
+						"dateOccured" -> formattedLocalTime,
 						"expenseId" -> expense.expenseId
-					).executeInsert()
-				possibleNewId.fold(throw new RuntimeException(s"Could not save expense ${expense.expenseId}"))(identity)
+					).executeUpdate()
+				if (numberOfInsertedRow != 1) {
+					throw new RuntimeException(s"Could not insert expense with id of ${expense.expenseId}")
+				}
 			}
 			()
 		}
