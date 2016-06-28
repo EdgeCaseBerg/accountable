@@ -22,7 +22,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 						"dateOccured" -> expense.dateOccured,
 						"expenseId" -> expense.expenseId
 					).executeInsert()
-				possibleNewId.fold(throw new RuntimeException("Could not save termId"))(identity)
+				possibleNewId.fold(throw new RuntimeException(s"Could not save expense ${expense.expenseId}"))(identity)
 			}
 			()
 		}
