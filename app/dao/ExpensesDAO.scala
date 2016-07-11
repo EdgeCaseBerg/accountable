@@ -11,8 +11,8 @@ import java.time.Instant
  */
 trait ExpensesDAO {
 
-	/** A group that serves as a catch all for any expenses that do not belong 
-	 * in a group when listExpensesByGroupDuringWeekOf
+	/** A group that serves as a catch all for any expenses that do not belong
+	 *  in a group when listExpensesByGroupDuringWeekOf
 	 */
 	final val ungroupedGroup = ExpenseGroup("ungrouped")
 
