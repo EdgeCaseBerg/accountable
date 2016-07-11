@@ -35,7 +35,18 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	}
 	/** @inheritdoc
 	 */
-	def listExpensesDuringWeekOf(epochInstant: Instant): Future[List[Expense]] = ???
+	def listExpensesDuringWeekOf(epochInstant: Instant): Future[List[Expense]] = Future {
+		val startOfWeek = TimeUtils.getWeekOf(epochInstant)
+		val localTime = ZonedDateTime.ofInstant(startOfWeek, ZoneId.systemDefault)
+		val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
+		mysqlConnector.withReadOnlyConnection { implicit connection =>
+			val sql = SQL("""
+				SELECT expenses.amountInCents, expenses.name, expenses.dateOccured, expenses.expenseId FROM expenses
+				WHERE expenses.dateOccured BETWEEN {weekStart} AND ({weekStart} + INTERVAL 1 WEEK)
+			""").on("weekStart" -> formattedLocalTime).as(MySqlToDomainColumnParsers.expenseParser *)
+			sql.toList
+		}
+	}
 
 	/** @inheritdoc
 	 */
