@@ -18,7 +18,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 				val localTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(expense.dateOccured), ZoneId.systemDefault)
 				val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
 				val numberOfInsertedRow = SQL(
-					"""INSERT INTO expenses (amountInCents,name,dateOccured,expenseId) VALUES ({amountInCents}, {name}, {dateOccured}, expenseId)"""
+					"""INSERT INTO expenses (amountInCents,name,dateOccured,expenseId) VALUES ({amountInCents}, {name}, {dateOccured}, {expenseId})"""
 				).on(
 						"amountInCents" -> expense.amountInCents,
 						"name" -> expense.name,
