@@ -12,7 +12,7 @@ class ExpensesDAOTest extends testhelpers.MigratedAndCleanDatabase {
 
 	lazy val expensesDAO = new MySQLExpensesDAO(mySqlConnection)
 
-	val myTestExpense = Expense(amountInCents = 100, name = "Test Expense", dateOccured = 1467083533)
+	val myTestExpense = Expense(amountInCents = 100, name = "Test Expense", dateOccured = 1467000000)
 
 	val fixtureGroup = ExpenseGroup("TestGroup", UUID.fromString("b95bd45d-f654-42fb-8cea-7c7e8db230e9"))
 
