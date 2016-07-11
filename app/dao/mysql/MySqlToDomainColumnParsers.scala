@@ -30,4 +30,36 @@ object MySqlToDomainColumnParsers {
 				}
 			}
 	}
+
+	val expenseGroupParser: RowParser[ExpenseGroup] = {
+		get[String]("expenseGroups.name") ~
+			get[String]("expenseGroups.groupId") map {
+				case name ~ groupId => {
+					Try(UUID.fromString(groupId)) match {
+						case Success(uuid) => ExpenseGroup(name, uuid)
+						case Failure(_) => {
+							Logger.error(s"Could not load ExpenseGroup with groupId of '$groupId', generating temporary UUID for group")
+							ExpenseGroup(name)
+						}
+					}
+				}
+			}
+	}
+
+	val expensesJoinedToGroupsParser: RowParser[Tuple2[Expense, ExpenseGroup]] = {
+		expenseParser ~
+			get[String]("groupName") ~
+			get[String]("groupId") map {
+				case expense ~ name ~ groupId => {
+					val group = Try(UUID.fromString(groupId)) match {
+						case Success(uuid) => ExpenseGroup(name, uuid)
+						case Failure(_) => {
+							Logger.error(s"Could not load ExpenseGroup with groupId of '$groupId', generating temporary UUID for group")
+							ExpenseGroup(name)
+						}
+					}
+					(expense, group)
+				}
+			}
+	}
 }
