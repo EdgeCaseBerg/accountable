@@ -11,6 +11,11 @@ import java.time.Instant
  */
 trait ExpensesDAO {
 
+	/** A group that serves as a catch all for any expenses that do not belong 
+	 * in a group when listExpensesByGroupDuringWeekOf
+	 */
+	final val ungroupedGroup = ExpenseGroup("ungrouped")
+
 	/** Creates a new expense in the database.
 	 *
 	 *  Implementation Detail: If I was using an auto-increment column for the ID I
@@ -34,6 +39,8 @@ trait ExpensesDAO {
 	def listExpensesDuringWeekOf(epochInstant: Instant): Future[List[Expense]]
 
 	/** Lists the expenses that took place during the same week as the given instance, keyed in a map by their group
+	 *
+	 *  @note If an expense is not in a group, it will be placed into the "ungroupedGroup" group, you cannot rely on this group's UUID to be the same between requests
 	 *
 	 *  See [[utils.TimeUtils]] (This has not been created yet) for how an instant is
 	 *  converted to a week period.
