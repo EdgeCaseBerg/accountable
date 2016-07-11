@@ -13,7 +13,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	/** @inheritdoc
 	 */
 	def createNewExpense(expense: Expense): Future[Unit] = {
-		val insertOperation = future {
+		val insertOperation = Future {
 			mysqlConnector.withTransaction { implicit connection =>
 				val localTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(expense.dateOccured), ZoneId.systemDefault)
 				val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
