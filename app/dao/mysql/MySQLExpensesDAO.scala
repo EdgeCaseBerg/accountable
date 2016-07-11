@@ -2,6 +2,8 @@ package dao.mysql
 
 import dao._
 import models.domain._
+import utils._
+
 import scala.concurrent.{ Future, future, ExecutionContext }
 import javax.inject.Inject
 import java.time._
