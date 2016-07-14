@@ -1,5 +1,6 @@
 package dao.mysql
 
+import dao.exceptions._
 import java.sql.SQLException
 import com.mysql.jdbc.MysqlDataTruncation
 
@@ -13,7 +14,9 @@ class SQLToDomainExceptonMapper() {
 	 *  @return Throwable that has been mapped to a domain exception if possible, or the given throwable otherwise
 	 */
 	def map(throwable: Throwable): Throwable = throwable match {
-		// case _: MysqlDataTruncation => truncated data because a field was out of range
+		case _: MysqlDataTruncation => {
+			DataTooLargeException(s"Looks like one of the values you submited was too big for it's britches!", throwable)
+		}
 		// case throwable: SQLException if throwable.getErrorCode() == 23505 => 	Unique Key Violation
 		case _ => throwable
 	}
