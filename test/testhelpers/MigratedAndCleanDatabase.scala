@@ -36,7 +36,7 @@ trait MigratedAndCleanDatabase extends FlatSpec with Matchers with BeforeAndAfte
 		val tempDir = File.newTemporaryDirectory()
 		val tempFile = tempDir / fileName
 		file.copyTo(tempFile)
-		flywayLocations ++= Seq(tempDir.pathAsString)
+		flywayLocations ++= Seq("filesystem:" + tempDir.pathAsString)
 	}
 
 	lazy val mySqlConnection = new MySQLConnector(MySQLDatabaseParameters(
