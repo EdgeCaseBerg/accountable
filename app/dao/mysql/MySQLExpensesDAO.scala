@@ -52,6 +52,38 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 
 	/** @inheritdoc
 	 */
-	def listExpensesByGroupDuringWeekOf(epochInstant: Instant): Future[Map[ExpenseGroup, List[Expense]]] = ???
+	def listExpensesByGroupDuringWeekOf(epochInstant: Instant): Future[Map[ExpenseGroup, List[Expense]]] = Future {
+		val startOfWeek = TimeUtils.getWeekOf(epochInstant)
+		val localTime = ZonedDateTime.ofInstant(startOfWeek, ZoneId.systemDefault)
+		val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
+		mysqlConnector.withReadOnlyConnection { implicit connection =>
+			val sql = SQL("""
+					SELECT 
+					expenses.amountInCents, expenses.name, expenses.dateOccured, expenses.expenseId, 
+					case when eg.name is null then {defaultGroupName} else eg.name end as 'groupName',
+					case when eg.groupId is null then {defaultGroupId} else eg.groupId end as 'groupId'
+					FROM expenses 
+					LEFT JOIN expenseGroupToExpense ON expenses.expenseId = expenseGroupToExpense.expenseId
+					LEFT JOIN expenseGroups eg ON eg.groupId = expenseGroupToExpense.groupId
+					WHERE expenses.dateOccured BETWEEN {weekStart} AND ({weekStart} + INTERVAL 1 WEEK)
+					GROUP BY expenses.expenseId
+			""").on(
+				"weekStart" -> formattedLocalTime,
+				"defaultGroupName" -> ungroupedGroup.name,
+				"defaultGroupId" -> ungroupedGroup.groupId
+			).as(MySqlToDomainColumnParsers.expensesJoinedToGroupsParser *)
+
+			val mutableMap = scala.collection.mutable.Map[ExpenseGroup, List[Expense]]()
+			sql.toList.foreach { expenseExpenseGroupTuple =>
+				val (expense, group) = expenseExpenseGroupTuple
+				if (mutableMap.contains(group)) {
+					mutableMap(group) = (mutableMap(group).toSet ++ Set(expense)).toList
+				} else {
+					mutableMap(group) = List(expense)
+				}
+			}
+			mutableMap.toMap
+		}
+	}
 
 }
