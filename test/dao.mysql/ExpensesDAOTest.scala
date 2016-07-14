@@ -1,6 +1,7 @@
 package utils
 
 import dao.mysql._
+import dao.exceptions._
 import models.domain._
 
 import org.scalatest.{ FlatSpec, Matchers }
@@ -21,6 +22,13 @@ class ExpensesDAOTest extends testhelpers.MigratedAndCleanDatabase {
 	"The ExpensesDAO" should "create a new Expense" in {
 		whenReady(expensesDAO.createNewExpense(myTestExpense)) { unit =>
 			assert(true)
+		}
+	}
+
+	it should "map a data truncation error to an application specific error" in {
+		val invalidExpense = myTestExpense.copy(name = "A" * 513) // Magic number comes from the migration and database definition
+		whenReady(expensesDAO.createNewExpense(invalidExpense).failed) { exception =>
+			exception shouldBe an[DataTooLargeException]
 		}
 	}
 
