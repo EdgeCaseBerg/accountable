@@ -26,20 +26,29 @@ class ExpensesDAOTest extends testhelpers.MigratedAndCleanDatabase {
 
 	it should "return the created expense when listing the week it is from" in {
 		whenReady(expensesDAO.listExpensesDuringWeekOf(Instant.ofEpochSecond(myTestExpense.dateOccured))) { expensesList =>
+			println(expensesList)
 			expensesList.find(_.expenseId == myTestExpense.expenseId).fold(fail("Did not load saved expense")) { theLoadedExpense =>
 				assertResult(myTestExpense)(theLoadedExpense)
 			}
 		}
 	}
 
-	it should "return expenses by their group" in {
+	it should "return ungrouped expenses in a default group" in {
 		val epoch = Instant.ofEpochSecond(myTestExpense.dateOccured)
 		whenReady(expensesDAO.listExpensesByGroupDuringWeekOf(epoch)) { groupToExpenseMap =>
-			/** It should have 2 because the fixture has 1 group and the newly created one is ungrouped
-			 */
-			assertResult(2)(groupToExpenseMap.size)
-			groupToExpenseMap.contains(fixtureGroup)
-			groupToExpenseMap.contains(expensesDAO.ungroupedGroup)
+			assertResult(1)(groupToExpenseMap.size)
+			assert(groupToExpenseMap.contains(expensesDAO.ungroupedGroup))
+			groupToExpenseMap(expensesDAO.ungroupedGroup).find(_.expenseId == myTestExpense.expenseId).fold(fail("Did not find expense in group")) { theFoundExpense =>
+				assertResult(myTestExpense)(theFoundExpense)
+			}
+		}
+	}
+
+	it should "return grouped expenses in their group" in {
+		val epoch = Instant.ofEpochSecond(1435449600)
+		whenReady(expensesDAO.listExpensesByGroupDuringWeekOf(epoch)) { groupToExpenseMap =>
+			assertResult(1)(groupToExpenseMap.size)
+			assert(groupToExpenseMap.contains(fixtureGroup))
 		}
 	}
 
