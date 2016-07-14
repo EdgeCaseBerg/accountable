@@ -26,7 +26,6 @@ class ExpensesDAOTest extends testhelpers.MigratedAndCleanDatabase {
 
 	it should "return the created expense when listing the week it is from" in {
 		whenReady(expensesDAO.listExpensesDuringWeekOf(Instant.ofEpochSecond(myTestExpense.dateOccured))) { expensesList =>
-			println(expensesList)
 			expensesList.find(_.expenseId == myTestExpense.expenseId).fold(fail("Did not load saved expense")) { theLoadedExpense =>
 				assertResult(myTestExpense)(theLoadedExpense)
 			}
