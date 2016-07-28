@@ -1,7 +1,7 @@
 package dao.mysql
 
 import dao.exceptions._
-import java.sql.SQLException
+import java.sql.{ SQLException, SQLIntegrityConstraintViolationException }
 import com.mysql.jdbc.MysqlDataTruncation
 
 /** Maps SQL Exceptions from the database layer to a domain specific exception
@@ -16,6 +16,9 @@ class SQLToDomainExceptonMapper() {
 	def map(throwable: Throwable): Throwable = throwable match {
 		case _: MysqlDataTruncation => {
 			DataTooLargeException(s"Looks like one of the values you submited was too big for it's britches!", throwable)
+		}
+		case e: SQLIntegrityConstraintViolationException if e.getMessage().toUpperCase.startsWith("DUPLICATE ENTRY") => {
+			DuplicateDataException(e.getMessage(), e)
 		}
 		// case throwable: SQLException if throwable.getErrorCode() == 23505 => 	Unique Key Violation
 		case _ => throwable
