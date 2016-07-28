@@ -45,9 +45,9 @@ class ExpenseGroupsDAOTest extends testhelpers.MigratedAndCleanDatabase {
 		}
 	}
 
-	it should "list the created expenses and the ones in the database" in {
+	it should "list the created expense groups and the ones in the database" in {
 		whenReady(expenseGroupsDAO.listExpenseGroups()) { expenseGroups =>
-			assert(expenseGroups.contains(fixtureExpense))
+			assert(expenseGroups.contains(fixtureGroup))
 			assert(expenseGroups.contains(myTestGroup))
 		}
 	}
