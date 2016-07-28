@@ -34,6 +34,13 @@ class MySQLExpenseGroupsDAO @Inject() (mysqlConnector: MySQLConnector)(implicit 
 		insertOperation
 	}
 
-	def listExpenseGroups(): Future[List[ExpenseGroup]] = ???
+	def listExpenseGroups(): Future[List[ExpenseGroup]] = Future {
+		mysqlConnector.withReadOnlyConnection { implicit connection =>
+			val sql = SQL("""
+				SELECT expenseGroups.name, expenseGroups.groupId FROM expenseGroups
+			""").as(MySqlToDomainColumnParsers.expenseGroupParser *)
+			sql.toList
+		}
+	}
 
 }
