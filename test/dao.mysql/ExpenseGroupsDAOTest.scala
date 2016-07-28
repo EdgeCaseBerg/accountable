@@ -53,13 +53,13 @@ class ExpenseGroupsDAOTest extends testhelpers.MigratedAndCleanDatabase {
 	}
 
 	it should "fail to add an expense that doesn't exist to a group" in {
-		whenReady(expenseGroupsDAO.addExpenseToGroup(UUID.fromString("b95ad45d-f654-42fb-8cva-7c7e8db230e7"), myTestGroup).failed) { exception =>
+		whenReady(expenseGroupsDAO.addExpenseToGroup(UUID.fromString("b95ad45d-f654-42fb-8cfa-7c7e8db230e7"), myTestGroup).failed) { exception =>
 			exception shouldBe an[ExpenseDoesNotExistException]
 		}
 	}
 
 	it should "fail to add an expense to a group that doesn't exist" in {
-		whenReady(expenseGroupsDAO.addExpenseToGroup(fixtureExpense.expenseId, myTestGroup.copy(groupId = UUID.fromString("b95ad45d-f654-42fb-8cva-7c7e8db230e7"))).failed) { exception =>
+		whenReady(expenseGroupsDAO.addExpenseToGroup(fixtureExpense.expenseId, myTestGroup.copy(groupId = UUID.fromString("b95ad45d-f654-42fb-8cfa-7c7e8db230e7"))).failed) { exception =>
 			exception shouldBe an[ExpenseGroupDoesNotExistException]
 		}
 	}
