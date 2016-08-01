@@ -20,7 +20,50 @@ class SQLToDomainExceptonMapper() {
 		case e: SQLIntegrityConstraintViolationException if e.getMessage().toUpperCase.startsWith("DUPLICATE ENTRY") => {
 			DuplicateDataException(e.getMessage(), e)
 		}
+		case e: SQLIntegrityConstraintViolationException if e.getMessage().toUpperCase.contains("A FOREIGN KEY CONSTRAINT FAILS") => {
+			determineExceptionForForeignConstraint(e)
+		}
 		// case throwable: SQLException if throwable.getErrorCode() == 23505 => 	Unique Key Violation
-		case _ => throwable
+		case _ => {
+			//throwable.printStackTrace()
+			throwable
+		}
+	}
+
+	/**
+	 */
+	val failedConstraintFieldRegEx = """.*FOREIGN KEY \(.([^`]+).\) REFERENCES.*""".r
+
+	/** for some reason this isn't working even though in the console it does:
+	 *  scala> val s = """CANNOT ADD OR UPDATE A CHILD ROW: A FOREIGN KEY CONSTRAINT FAILS (`ACCOUNTABLE_TEST`.`EXPENSEGROUPTOEXPENSE`, CONSTRAINT `EXPENSEGROUPTOEXPENSE_IBFK_1` FOREIGN KEY (`GROUPID`) REFERENCES `EXPENSEGROUPS` (`GROUPID`))"""
+	 *  s: String = CANNOT ADD OR UPDATE A CHILD ROW: A FOREIGN KEY CONSTRAINT FAILS (`ACCOUNTABLE_TEST`.`EXPENSEGROUPTOEXPENSE`, CONSTRAINT `EXPENSEGROUPTOEXPENSE_IBFK_1` FOREIGN KEY (`GROUPID`) REFERENCES `EXPENSEGROUPS` (`GROUPID`))
+	 *
+	 *  scala> val failedConstraintFieldRegEx = """.*FOREIGN KEY \(.([^`]+).\) REFERENCES.*""".r
+	 *  failedConstraintFieldRegEx: scala.util.matching.Regex = .*FOREIGN KEY \(.([^`]+).\) REFERENCES.*
+	 *
+	 *  scala> s match {
+	 *  | case failedConstraintFieldRegEx(x) => println(x)
+	 *  | }
+	 *  GROUPID
+	 *
+	 */
+	def determineExceptionForForeignConstraint(exception: SQLIntegrityConstraintViolationException): Throwable = {
+		println("determineExceptionForForeignConstraint")
+		val msg = exception.getMessage().toUpperCase()
+		println(failedConstraintFieldRegEx.findFirstMatchIn(msg))
+		if (msg.contains("CANNOT ADD OR UPDATE A CHILD ROW")) {
+			println("going to match it...")
+			msg.toString match {
+				case failedConstraintFieldRegEx(fieldStr: String) if fieldStr == "EXPENSEID" => ExpenseDoesNotExistException("The expense does not exist!", exception)
+				case failedConstraintFieldRegEx(fieldStr: String) if fieldStr == "GROUPID" => ExpenseGroupDoesNotExistException("The group does not exist!", exception)
+				case x => {
+					println("nope")
+					exception
+				}
+			}
+		} else {
+			println("nopee")
+			exception
+		}
 	}
 }
