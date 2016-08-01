@@ -12,8 +12,6 @@ import anorm._
 
 class MySQLExpenseGroupsDAO @Inject() (mysqlConnector: MySQLConnector)(implicit executionContext: ExecutionContext) extends ExpenseGroupsDAO {
 
-	def addExpenseToGroup(expenseId: UUID, expenseGroup: ExpenseGroup): Future[Unit] = ???
-
 	/** @inheritdoc
 	 */
 	def createExpenseGroup(expenseGroup: ExpenseGroup): Future[Unit] = {
@@ -34,12 +32,32 @@ class MySQLExpenseGroupsDAO @Inject() (mysqlConnector: MySQLConnector)(implicit 
 		insertOperation
 	}
 
+	/** @inheritdoc
+	 */
 	def listExpenseGroups(): Future[List[ExpenseGroup]] = Future {
 		mysqlConnector.withReadOnlyConnection { implicit connection =>
 			val sql = SQL("""
 				SELECT expenseGroups.name, expenseGroups.groupId FROM expenseGroups
 			""").as(MySqlToDomainColumnParsers.expenseGroupParser *)
 			sql.toList
+		}
+	}
+
+	/** @inheritdoc
+	 */
+	def addExpenseToGroup(expenseId: UUID, expenseGroup: ExpenseGroup) = Future {
+		mysqlConnector.withTransaction { implicit connection =>
+			val numberOfInsertedRow = SQL("""
+				INSERT INTO expenseGroupToExpense (expenseId, groupId) VALUES ({expenseId}, {groupId}) ON DUPLICATE KEY UPDATE groupId = groupId
+				""").on(
+				"expenseId" -> expenseId,
+				"groupId" -> expenseGroup.groupId
+			).executeUpdate()
+			println(numberOfInsertedRow)
+			if (numberOfInsertedRow != 1) {
+				throw new RuntimeException(s"Could not add expenseId ${expenseId} to group ${expenseGroup.name}")
+			}
+			()
 		}
 	}
 
