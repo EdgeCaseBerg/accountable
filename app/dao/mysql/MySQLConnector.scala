@@ -54,7 +54,15 @@ class MySQLConnector @Inject() (
 		new HikariDataSource(getHikariConfig())
 	}
 
+	val readOnlyDataSource: DataSource = {
+		val datasource = getHikariConfig()
+		datasource.setReadOnly(true)
+		new HikariDataSource(datasource)
+	}
+
 	ConnectionPool.singleton(new DataSourceConnectionPool(dataSource))
+
+	ConnectionPool.add("readOnlyHikariCP", new DataSourceConnectionPool(readOnlyDataSource))
 
 	/** Execute a block of code, in the scope of a JDBC connection.
 	 *  The connection and all created statements are automatically released.
@@ -82,15 +90,13 @@ class MySQLConnector @Inject() (
 	 *  @param block Code block to execute with an implicit connection in scope
 	 */
 	def withReadOnlyConnection[A](implicit block: Connection => A): A = {
-		implicit val connection: Connection = ConnectionPool.borrow()
+		implicit val connection: Connection = ConnectionPool.borrow("readOnlyHikariCP")
 		try {
 			connection.setAutoCommit(false)
-			connection.setReadOnly(true)
 			block(connection)
 		} catch {
 			case e: Throwable => throw sQLToDomainExceptonMapper.map(e)
 		} finally {
-			connection.setReadOnly(false)
 			connection.close()
 		}
 	}

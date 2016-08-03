@@ -53,7 +53,6 @@ class MySQLExpenseGroupsDAO @Inject() (mysqlConnector: MySQLConnector)(implicit 
 				"expenseId" -> expenseId,
 				"groupId" -> expenseGroup.groupId
 			).executeUpdate()
-			println(numberOfInsertedRow)
 			if (numberOfInsertedRow != 1) {
 				throw new RuntimeException(s"Could not add expenseId ${expenseId} to group ${expenseGroup.name}")
 			}
