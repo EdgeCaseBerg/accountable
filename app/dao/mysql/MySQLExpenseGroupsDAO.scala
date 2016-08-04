@@ -48,12 +48,12 @@ class MySQLExpenseGroupsDAO @Inject() (mysqlConnector: MySQLConnector)(implicit 
 	def addExpenseToGroup(expenseId: UUID, expenseGroup: ExpenseGroup) = Future {
 		mysqlConnector.withTransaction { implicit connection =>
 			val numberOfInsertedRow = SQL("""
-				INSERT INTO expenseGroupToExpense (expenseId, groupId) VALUES ({expenseId}, {groupId}) ON DUPLICATE KEY UPDATE groupId = groupId
+				INSERT INTO expenseGroupToExpense (expenseId, groupId) VALUES ({expenseId}, {groupId}) ON DUPLICATE KEY UPDATE groupId = {groupId}
 				""").on(
 				"expenseId" -> expenseId,
 				"groupId" -> expenseGroup.groupId
 			).executeUpdate()
-			if (numberOfInsertedRow != 1) {
+			if (numberOfInsertedRow < 1) {
 				throw new RuntimeException(s"Could not add expenseId ${expenseId} to group ${expenseGroup.name}")
 			}
 			()

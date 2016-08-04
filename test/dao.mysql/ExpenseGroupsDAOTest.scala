@@ -76,7 +76,7 @@ class ExpenseGroupsDAOTest extends testhelpers.MigratedAndCleanDatabase {
 		}
 	}
 
-	it should "switch an expense's group if the expense is added to the group" in {
+	it should "switch an expense's group if the expense is added to that group if it belonged to another group" in {
 		val epoch = Instant.ofEpochSecond(fixtureExpense.dateOccured)
 		val futureResults = for {
 			_ <- expenseGroupsDAO.addExpenseToGroup(fixtureExpense.expenseId, fixtureGroup)
