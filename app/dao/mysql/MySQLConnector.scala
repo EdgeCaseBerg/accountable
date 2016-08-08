@@ -70,7 +70,7 @@ class MySQLConnector @Inject() (
 	 *
 	 *  @param block Code block to execute with an implicit connection in scope
 	 */
-	def withConnection[A](implicit block: Connection => A): A = {
+	def withConnection[A](block: Connection => A): A = {
 		implicit val connection: Connection = ConnectionPool.borrow()
 		try {
 			block(connection)
@@ -89,7 +89,7 @@ class MySQLConnector @Inject() (
 	 *
 	 *  @param block Code block to execute with an implicit connection in scope
 	 */
-	def withReadOnlyConnection[A](implicit block: Connection => A): A = {
+	def withReadOnlyConnection[A](block: Connection => A): A = {
 		implicit val connection: Connection = ConnectionPool.borrow("readOnlyHikariCP")
 		try {
 			connection.setAutoCommit(false)
