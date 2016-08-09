@@ -10,6 +10,8 @@ version := "0.0.0"
 
 scalaVersion := "2.11.7"
 
+autoAPIMappings := true // Allow scaladoc to grab documentation as neccesary
+
 resolvers += "Typesafe Repo" at "http://repo.typesafe.com/typesafe/releases/"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
