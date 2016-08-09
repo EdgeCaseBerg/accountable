@@ -1,3 +1,4 @@
 package dao.exceptions
 
-case class DuplicateDataException(val msg: String, val cause: Throwable) extends DAOException(msg, cause)
+/** Exception indicating that an error occured because of an attempt to duplicate data in the system */
+case class DuplicateDataException(override val msg: String, override val cause: Throwable) extends DAOException(msg, cause)

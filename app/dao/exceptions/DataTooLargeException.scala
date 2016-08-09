@@ -1,3 +1,4 @@
 package dao.exceptions
 
-case class DataTooLargeException(val msg: String, val cause: Throwable) extends DAOException(msg, cause)
+/** Exception indicating that data present in the system was outside the expected bounds for the given context */
+case class DataTooLargeException(override val msg: String, override val cause: Throwable) extends DAOException(msg, cause)
