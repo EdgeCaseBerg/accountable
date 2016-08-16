@@ -57,7 +57,17 @@ class ExpenseManagementService @Inject() (expenseGroupsDAO: ExpenseGroupsDAO, ex
 		}
 	}
 
+	/** List the expenses for the current week
+	 */
 	def listCurrentWeeksCurrentExpenses(): Future[List[Expense]] = {
 		expensesDAO.listExpensesDuringWeekOf(Instant.now())
 	}
+
+	/** List the expenses, grouped by their ExpenseGroup, for the current week
+	 */
+	def listCurrentWeeksCurrentExpensesWithGroup(): Future[Map[ExpenseGroup, List[Expense]]] = {
+		expensesDAO.listExpensesByGroupDuringWeekOf(Instant.now())
+	}
+
+
 }
