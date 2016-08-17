@@ -4,7 +4,9 @@ import com.google.inject.AbstractModule
 import dao._
 import mysql._
 
-class MySQLDAOModule extends AbstractModule with MySQLDatabaseParametersProvider {
+class MySQLDAOModule extends AbstractModule
+		with MySQLDatabaseParametersProvider
+		with ExecutionContextProvider {
 	override protected def configure() {
 		bind(classOf[ExpenseGroupsDAO]).to(classOf[MySQLExpenseGroupsDAO])
 		bind(classOf[ExpensesDAO]).to(classOf[MySQLExpensesDAO])
