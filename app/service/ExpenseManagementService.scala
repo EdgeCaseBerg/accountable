@@ -42,7 +42,7 @@ class ExpenseManagementService @Inject() (expenseGroupsDAO: ExpenseGroupsDAO, ex
 
 	/** Persist an Expense and link it to an ExpenseGroup
 	 *
-	 * @note If the expense already exists this method will simply add it to the group
+	 *  @note If the expense already exists this method will simply add it to the group
 	 *
 	 *  @param expense The Expense to persist to the underlying DAO
 	 *  @param expenseGroup The group to add the expense to once it's persisted
@@ -68,6 +68,5 @@ class ExpenseManagementService @Inject() (expenseGroupsDAO: ExpenseGroupsDAO, ex
 	def listCurrentWeeksCurrentExpensesWithGroup(): Future[Map[ExpenseGroup, List[Expense]]] = {
 		expensesDAO.listExpensesByGroupDuringWeekOf(Instant.now())
 	}
-
 
 }
