@@ -3,10 +3,13 @@ package service
 import testhelpers.ServiceTestWithDB
 import models.domain._
 import java.util.UUID
+import java.time.Instant
 
 import org.scalatest._
 import matchers.ShouldMatchers._
 import OptionValues._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ExpenseManagementServiceTest() extends ServiceTestWithDB {
 
@@ -17,6 +20,8 @@ class ExpenseManagementServiceTest() extends ServiceTestWithDB {
 	val fixtureExpenseId = UUID.fromString("07f256f0-f830-495d-b6cb-fe39bb5f2f36")
 
 	val fixtureExpenseGroupId = UUID.fromString("b95bd45d-f654-42fb-8cea-7c7e8db230e9")
+
+	var testExpense: Option[Expense] = None
 
 	"The ExpenseManagementService" should "make an expense group by name" in {
 		withExpenseManagementService { expenseManagementService =>
@@ -53,5 +58,22 @@ class ExpenseManagementServiceTest() extends ServiceTestWithDB {
 				assertResult(fixtureExpenseId)(listOfExpenses.head.expenseId)
 			}
 		}
+	}
+
+	it should "persist a new expense to a group and appear in the listing" in {
+		assume(expenseGroup.isDefined)
+		withExpenseManagementService { expenseManagementService =>
+			val newExpense = Expense(100, "Test Expense", Instant.now().getEpochSecond())
+			for {
+				_ <- expenseManagementService.createExpenseAndAddToGroup(newExpense, expenseGroup.get)
+				expensesByGroup <- expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup()
+			} yield {
+				assert(expensesByGroup.contains(expenseGroup.get))
+				val expense = expensesByGroup(expenseGroup.get).find(_.expenseId == newExpense.expenseId).value
+				assertResult(newExpense)(expense)
+				testExpense = Option(newExpense)
+			}
+		}
+
 	}
 }
