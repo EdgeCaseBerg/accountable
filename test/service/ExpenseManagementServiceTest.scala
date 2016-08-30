@@ -34,9 +34,10 @@ class ExpenseManagementServiceTest() extends ServiceTestWithDB {
 	}
 
 	it should "list the newly created group" in {
+		assume(expenseGroup.isDefined)
 		withExpenseManagementService { expenseManagementService =>
 			whenReady(expenseManagementService.listExpenseGroups()) { groups =>
-				assert(groups.find(_.name == "Test Group").isDefined)
+				assert(groups.find(_.name == expenseGroup.get.name).isDefined)
 			}
 		}
 	}
