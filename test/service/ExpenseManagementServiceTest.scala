@@ -65,16 +65,32 @@ class ExpenseManagementServiceTest() extends ServiceTestWithDB {
 		assume(expenseGroup.isDefined)
 		withExpenseManagementService { expenseManagementService =>
 			val newExpense = Expense(100, "Test Expense", Instant.now().getEpochSecond())
-			for {
+			val futureGroups = for {
 				_ <- expenseManagementService.createExpenseAndAddToGroup(newExpense, expenseGroup.get)
 				expensesByGroup <- expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup()
-			} yield {
+			} yield expensesByGroup
+
+			whenReady(futureGroups) { expensesByGroup =>
 				assert(expensesByGroup.contains(expenseGroup.get))
 				val expense = expensesByGroup(expenseGroup.get).find(_.expenseId == newExpense.expenseId).value
 				assertResult(newExpense)(expense)
 				testExpense = Option(newExpense)
 			}
 		}
+	}
 
+	it should "switch an existing expense's group if createExpenseAndAddToGroup called with one" in {
+		assume(testExpense.isDefined)
+		withExpenseManagementService { expenseManagementService =>
+			val futureGroups = for {
+				_ <- expenseManagementService.createExpenseAndAddToGroup(testExpense.get, ExpenseGroup("Doesn't matter", fixtureExpenseGroupId))
+				expensesByGroup <- expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup()
+			} yield expensesByGroup
+
+			whenReady(futureGroups) { expensesByGroup =>
+				val (group, listOfExpenses) = expensesByGroup.find { case (group, listOfExpenses) => group.groupId == fixtureExpenseGroupId }.value
+				assert(listOfExpenses.find(_.expenseId == testExpense.get.expenseId).isDefined)
+			}
+		}
 	}
 }
