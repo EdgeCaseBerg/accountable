@@ -52,7 +52,7 @@ class ExpenseManagementService @Inject() (expenseGroupsDAO: ExpenseGroupsDAO, ex
 			expense
 		}.recover {
 			case e: DuplicateDataException => expense // If it's duplicate that's fine, just add it to the group
-		}.map { createdExpense =>
+		}.flatMap { createdExpense =>
 			expenseGroupsDAO.addExpenseToGroup(expense.expenseId, expenseGroup)
 		}
 	}
