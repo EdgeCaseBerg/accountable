@@ -10,8 +10,6 @@ import models.domain._
 
 import play.api.Logger
 
-//val amountInCents: Long, val name: String, val dateOccured: Long, val expenseId: UUID = UUID.randomUUI
-
 object MySqlToDomainColumnParsers {
 	val expenseParser: RowParser[Expense] = {
 		get[Long]("expenses.amountInCents") ~
