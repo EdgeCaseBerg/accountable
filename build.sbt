@@ -50,4 +50,6 @@ flywayDriver := "com.mysql.jdbc.Driver"
 
 flywayLocations := Seq("filesystem:conf/db/migration")
 
-javaOptions in Test += "-Dconfig.file=conf/test.conf"
+javaOptions in Test ++= Seq("-Dconfig.file=conf/test.conf", "-Duser.timezone=UTC")
+
+javaOptions in Runtime += "-Duser.timezone=UTC"
