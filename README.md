@@ -36,6 +36,12 @@ Install MySQL and then setup the dev database and user:
 	GRANT ALL ON accountable_test.* TO 'user'@'localhost';
 	FLUSH PRIVILEGES
 
+Also, be sure to set your MySQL server to run in UTC time. You can do 
+this by updating your my.cnf file and setting:
+
+	[mysqld]
+	default-time-zone='+00:00'
+
 From there you can run `sbt` and then `flywayMigrate` to migrate to the
 newest database. Note that the application will be pretty useless until
 you record some of your expenses into it.
