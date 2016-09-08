@@ -3,7 +3,8 @@ package service
 import testhelpers.ServiceTestWithDB
 import models.domain._
 import java.util.UUID
-import java.time.Instant
+import java.time._
+import java.time.temporal.ChronoUnit.DAYS
 
 import org.scalatest._
 import matchers.ShouldMatchers._
@@ -64,7 +65,8 @@ class ExpenseManagementServiceTest() extends ServiceTestWithDB {
 	it should "persist a new expense to a group and appear in the listing" in {
 		assume(expenseGroup.isDefined)
 		withExpenseManagementService { expenseManagementService =>
-			val newExpense = Expense(100, "Test Expense", Instant.now().getEpochSecond())
+			val todaysDate = Instant.now(Clock.system(ZoneId.of("UTC"))).truncatedTo(DAYS).getEpochSecond()
+			val newExpense = Expense(100, "Test Expense", todaysDate)
 			val futureGroups = for {
 				_ <- expenseManagementService.createExpenseAndAddToGroup(newExpense, expenseGroup.get)
 				expensesByGroup <- expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup()
