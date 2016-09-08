@@ -17,7 +17,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	def createNewExpense(expense: Expense): Future[Unit] = {
 		val insertOperation = Future {
 			mysqlConnector.withTransaction { implicit connection =>
-				val localTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(expense.dateOccured), ZoneId.systemDefault)
+				val localTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(expense.dateOccured), ZoneId.of("UTC"))
 				val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
 				val numberOfInsertedRow = SQL(
 					"""INSERT INTO expenses (amountInCents,name,dateOccured,expenseId) VALUES ({amountInCents}, {name}, {dateOccured}, {expenseId})"""
@@ -39,7 +39,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	 */
 	def listExpensesDuringWeekOf(epochInstant: Instant): Future[List[Expense]] = Future {
 		val startOfWeek = TimeUtils.getWeekOf(epochInstant)
-		val localTime = ZonedDateTime.ofInstant(startOfWeek, ZoneId.systemDefault)
+		val localTime = ZonedDateTime.ofInstant(startOfWeek, ZoneId.of("UTC"))
 		val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
 		mysqlConnector.withReadOnlyConnection { implicit connection =>
 			val sql = SQL("""
@@ -54,7 +54,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	 */
 	def listExpensesByGroupDuringWeekOf(epochInstant: Instant): Future[Map[ExpenseGroup, List[Expense]]] = Future {
 		val startOfWeek = TimeUtils.getWeekOf(epochInstant)
-		val localTime = ZonedDateTime.ofInstant(startOfWeek, ZoneId.systemDefault)
+		val localTime = ZonedDateTime.ofInstant(startOfWeek, ZoneId.of("UTC"))
 		val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
 		mysqlConnector.withReadOnlyConnection { implicit connection =>
 			val sql = SQL("""
