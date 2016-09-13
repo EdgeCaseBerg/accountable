@@ -1,6 +1,8 @@
 package utils
 
 import java.time._
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit.DAYS
 
 /** A utility for dealing with time
  */
@@ -33,6 +35,15 @@ object TimeUtils {
 		 *  @return An Instant based on interpretting the given long as an epoch time
 		 */
 		def toInstant = Instant.ofEpochSecond(long)
+	}
+
+	/** Format an Instant to be ready for insertion into a database Date format of YYYY-MM-DD, zoning the instant to UTC time
+	 *  @param epochInstant The time to format
+	 *  @return A string representation of the date, formatted into UTC YYYY-MM-DD format
+	 */
+	def formatToUTCDateString(epochInstant: Instant): String = {
+		val localTime = ZonedDateTime.ofInstant(epochInstant, ZoneId.of("UTC")).truncatedTo(DAYS)
+		DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
 	}
 
 }
