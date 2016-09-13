@@ -30,7 +30,7 @@ class SQLToDomainExceptonMapper() {
 		}
 	}
 
-	/**
+	/** Regular expression to find a foreign key field string in a SQLIntegrityConstraintViolationException
 	 */
 	val failedConstraintFieldRegEx = """.*FOREIGN KEY \(.([^`]+).\) REFERENCES.*""".r
 
