@@ -3,10 +3,12 @@ package dao.mysql
 import dao._
 import models.domain._
 import utils._
+import TimeUtils.LongAsInstant
 
 import scala.concurrent.{ Future, future, ExecutionContext }
 import javax.inject.Inject
 import java.time._
+import java.time.temporal.ChronoUnit.DAYS
 import java.time.format.DateTimeFormatter
 import anorm._
 
@@ -17,8 +19,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	def createNewExpense(expense: Expense): Future[Unit] = {
 		val insertOperation = Future {
 			mysqlConnector.withTransaction { implicit connection =>
-				val localTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(expense.dateOccured), ZoneId.of("UTC"))
-				val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
+				val formattedLocalTime = TimeUtils.formatToUTCDateString(expense.dateOccured.toInstant)
 				val numberOfInsertedRow = SQL(
 					"""INSERT INTO expenses (amountInCents,name,dateOccured,expenseId) VALUES ({amountInCents}, {name}, {dateOccured}, {expenseId})"""
 				).on(
@@ -39,8 +40,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	 */
 	def listExpensesDuringWeekOf(epochInstant: Instant): Future[List[Expense]] = Future {
 		val startOfWeek = TimeUtils.getWeekOf(epochInstant)
-		val localTime = ZonedDateTime.ofInstant(startOfWeek, ZoneId.of("UTC"))
-		val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
+		val formattedLocalTime = TimeUtils.formatToUTCDateString(startOfWeek)
 		mysqlConnector.withReadOnlyConnection { implicit connection =>
 			val sql = SQL("""
 				SELECT expenses.amountInCents, expenses.name, expenses.dateOccured, expenses.expenseId FROM expenses
@@ -54,8 +54,7 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 	 */
 	def listExpensesByGroupDuringWeekOf(epochInstant: Instant): Future[Map[ExpenseGroup, List[Expense]]] = Future {
 		val startOfWeek = TimeUtils.getWeekOf(epochInstant)
-		val localTime = ZonedDateTime.ofInstant(startOfWeek, ZoneId.of("UTC"))
-		val formattedLocalTime = DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
+		val formattedLocalTime = TimeUtils.formatToUTCDateString(startOfWeek)
 		mysqlConnector.withReadOnlyConnection { implicit connection =>
 			val sql = SQL("""
 					SELECT 
