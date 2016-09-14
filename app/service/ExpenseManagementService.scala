@@ -30,7 +30,7 @@ class ExpenseManagementService @Inject() (expenseGroupsDAO: ExpenseGroupsDAO, ex
 		expenseGroupsDAO.createExpenseGroup(expenseGroup).map { _ =>
 			expenseGroup
 		}.recover {
-			case e: DAOException => throw e // No real backup plan, so just throw the exception
+			case e: DAOException => throw e // No real backup plan, so just throw the exception, though we could detect duplicate and then just return that perhaps
 		}
 	}
 
