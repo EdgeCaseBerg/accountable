@@ -1,5 +1,3 @@
-
-
 Accountable [![Build Status](https://travis-ci.org/EdgeCaseBerg/accountable.svg?branch=master)](https://travis-ci.org/EdgeCaseBerg/accountable)
 =============================================================
 
