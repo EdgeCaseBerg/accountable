@@ -10,6 +10,10 @@ import play.api.Play
 
 import scala.concurrent.ExecutionContext
 
+/** Module to provide MySQL implementations to Guice injections
+ *
+ *  @note May change to a trait later, but for now favoring abstract classes until I need multiple inheritance
+ */
 abstract class MySQLBackedDAOModule extends AbstractModule {
 	override def configure() {
 		bind(classOf[ExpensesDAO]).to(classOf[MySQLExpensesDAO])
