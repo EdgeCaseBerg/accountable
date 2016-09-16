@@ -19,7 +19,8 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 libraryDependencies ++= Seq(
 	"org.mockito" % "mockito-all" % "1.10.+",
 	"org.scalatestplus" %% "play" % "1.2.0" % "test",
-	"com.google.inject" % "guice" % "3.0",
+	"com.google.inject" % "guice" % "4.1.0",
+	"com.google.inject.extensions" % "guice-throwingproviders" % "4.1.0",
 	"com.typesafe" % "config" % "1.2.1",
   "com.typesafe.play" %% "anorm" % "2.3.+",
   "com.zaxxer" % "HikariCP" % "2.4.5",
