@@ -2,3 +2,4 @@ project/*
 !project/build.*
 !project/plugins.*
 target/
+logs/
