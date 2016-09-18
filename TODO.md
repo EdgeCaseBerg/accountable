@@ -10,7 +10,7 @@ UI allowing users to
 - add/switch expenses to groups
 - list a week's expenses + summary
 - import BGI format data job/method
-- Recieve email of expenses listed by group each week
+- Send email of expenses listed by group each week
 
 ## 0.1.0
 
