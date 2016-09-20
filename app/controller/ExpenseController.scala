@@ -20,4 +20,19 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 		}
 	}
 
+	def summarizeWeeksExpenses = Action.async {
+		expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup.map { expensesByGroup =>
+			Ok(expensesByGroup.toString)
+		}.recover {
+			case NonFatal(e) => {
+				BadRequest("Could not load this weeks expenses").flashing("error" -> e.getMessage())
+			}
+		}
+	}
+
+	def createExpense = Action {
+		// TO-DO: Bind form, create expense
+		BadRequest("todo")
+	}
+
 }
