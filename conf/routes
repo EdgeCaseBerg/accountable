@@ -1,3 +1,5 @@
 
 GET /current/expenses @controller.ExpenseController.listCurrentExpenses
 GET /current/summary @controller.ExpenseController.summarizeWeeksExpenses
+
+POST /expenses @controller.ExpenseController.createExpense
