@@ -95,4 +95,14 @@ class ExpenseManagementServiceTest() extends ServiceTestWithDB {
 			}
 		}
 	}
+
+	it should "create an expense" in {
+		withExpenseManagementService { expenseManagementService =>
+			val expense = Expense(amountInCents = 100, name = "Test Expense", dateOccured = 1466985600)
+			val createdExpenseFuture = expenseManagementService.createExpense(expense)
+			whenReady(createdExpenseFuture) { createdExpense =>
+				assertResult(expense)(createdExpense)
+			}
+		}
+	}
 }
