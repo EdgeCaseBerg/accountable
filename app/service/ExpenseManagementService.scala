@@ -69,4 +69,13 @@ class ExpenseManagementService @Inject() (expenseGroupsDAO: ExpenseGroupsDAO, ex
 		expensesDAO.listExpensesByGroupDuringWeekOf(Instant.now())
 	}
 
+	/** Create expense
+	 *  @param expense The expense to be created
+	 */
+	def createExpense(expense: Expense): Future[Expense] = {
+		expensesDAO.createNewExpense(expense).map { _ =>
+			expense
+		}
+	}
+
 }
