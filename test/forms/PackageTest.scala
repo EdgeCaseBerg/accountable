@@ -23,7 +23,7 @@ class PackageTest extends FlatSpec with Matchers with OptionValues {
 
 	it should "provide a uuid constraint that succeeds on uuid strings" in {
 		validUUID(java.util.UUID.randomUUID().toString) match {
-			case Valid => // ... pass
+			case Valid => succeed
 			case _ => fail("Constraint failed when it should have passed")
 		}
 	}
