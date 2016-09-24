@@ -7,7 +7,6 @@ import java.time._
 import java.time.temporal.ChronoUnit.DAYS
 
 import org.scalatest._
-import matchers.ShouldMatchers._
 import OptionValues._
 
 import scala.concurrent.ExecutionContext.Implicits.global
