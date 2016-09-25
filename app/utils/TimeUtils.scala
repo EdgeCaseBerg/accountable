@@ -46,4 +46,16 @@ object TimeUtils {
 		DateTimeFormatter.ISO_LOCAL_DATE.format(localTime)
 	}
 
+	/** Format that HTML5 input[type=date] use for their value */
+	val html5DateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+	def html5StringToEpochSecond(`yyyy-MM-dd`: String) = {
+		LocalDate.parse(`yyyy-MM-dd`, html5DateFormat).atStartOfDay.toEpochSecond(ZoneOffset.UTC)
+	}
+
+	def epochSecondsToHtml5DateString(epochSeconds: Long) = {
+		val zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.of("UTC")).truncatedTo(DAYS)
+		html5DateFormat.format(zonedDateTime)
+	}
+
 }
