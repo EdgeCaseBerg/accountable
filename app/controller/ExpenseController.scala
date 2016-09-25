@@ -34,7 +34,7 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 	}
 
 	def showCreateExpenseForm = CSRFAddToken {
-		Action.async {
+		Action.async { implicit request =>
 			expenseManagementService.listExpenseGroups.recover {
 				case NonFatal(e) => List.empty[ExpenseGroup]
 			}.map { expenseGroups =>
