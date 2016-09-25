@@ -11,7 +11,7 @@ class ExpenseFormsTest extends FlatSpec with Matchers with OptionValues {
 	val validDefaults = Map(
 		"amount" -> "10.00",
 		"name" -> "A name",
-		"dateOccured" -> "2016/06/28",
+		"dateOccured" -> "2016-06-28",
 		"groupId" -> java.util.UUID.randomUUID().toString
 	)
 
