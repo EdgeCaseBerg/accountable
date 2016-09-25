@@ -29,7 +29,7 @@ object ExpenseForms {
 	val createExpenseForm = Form[(Expense, Option[UUID])](
 		mapping(
 			"amount" -> amountToCents,
-			"name" -> nonEmptyText,
+			"name" -> nonEmptyText(maxLength = 512),
 			"dateOccured" -> htmlDateInputToEpochSecond,
 			"groupId" -> optional(uuid)
 		)(unapplyExpenseForm)(applyExpenseForm)
