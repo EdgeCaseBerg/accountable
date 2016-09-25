@@ -69,7 +69,7 @@ class ExpenseFormsTest extends FlatSpec with Matchers with OptionValues {
 		)
 	}
 
-	it should "parse a date string to an Instant" in {
+	it should "parse a date string to an epoch second" in {
 		createExpenseForm.bind(validDefaults).fold(
 			formWithErrors => fail(formWithErrors.errors.mkString),
 			tuple => {
