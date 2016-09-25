@@ -33,4 +33,28 @@ class PackageTest extends FlatSpec with Matchers with OptionValues {
 		assert(!testForm.bind(Map("u" -> "xxx")).errors.isEmpty)
 		assert(testForm.bind(Map("u" -> java.util.UUID.randomUUID().toString)).errors.isEmpty)
 	}
+
+	it should "provide a constraint to confirm valid html 5 date strings" in {
+		validHtml5Date("2012-09-11") match {
+			case Valid => succeed
+			case _ => fail("Constraint failed when it should have passed")
+		}
+	}
+
+	it should "provide a constraint to confirm invalid html 5 date strings" in {
+		validHtml5Date("2015-2-22") match {
+			case Valid => fail("constraint passed when it should have failed")
+			case Invalid(errors) => {
+				assert(!errors.isEmpty)
+				assert(errors.find(_.message == "forms.invalid.html5Date").isDefined)
+			}
+		}
+	}
+
+	it should "provide a Long Mapping that can validate a form has an html5 date string" in {
+		val testForm = Form(single("d" -> htmlDateInputToEpochSecond))
+		assert(!testForm.bind(Map("d" -> "xxx")).errors.isEmpty)
+		assert(testForm.bind(Map("d" -> "2009-03-01")).errors.isEmpty)
+	}
+
 }
