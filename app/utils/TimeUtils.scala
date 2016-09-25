@@ -49,10 +49,18 @@ object TimeUtils {
 	/** Format that HTML5 input[type=date] use for their value */
 	val html5DateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
+	/** Convert a string from a date input value to epoch seconds
+	 *  @param yyyy-MM-dd The date string in yyyy-MM-dd format, such as 2001-9-11
+	 *  @return The given date represented in epoch seconds
+	 */
 	def html5StringToEpochSecond(`yyyy-MM-dd`: String) = {
 		LocalDate.parse(`yyyy-MM-dd`, html5DateFormat).atStartOfDay.toEpochSecond(ZoneOffset.UTC)
 	}
 
+	/** Converts epoch seconds to a date string matching html5's date input format
+	 *  @param epochSeconds The epoch seconds to convert
+	 *  @return A string of the form yyyy-MM-dd corresponding to the given epoch seconds
+	 */
 	def epochSecondsToHtml5DateString(epochSeconds: Long) = {
 		val zonedDateTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.of("UTC")).truncatedTo(DAYS)
 		html5DateFormat.format(zonedDateTime)
