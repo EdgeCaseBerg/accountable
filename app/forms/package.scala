@@ -48,4 +48,28 @@ package object forms {
 		)
 	}
 
+	/** Regular expression to match dollars.cents */
+	private val validAmountStringRE = "([0-9]+)\\.([0-9]{2})".r
+
+	/** Constraint to determine if something is in proper dollar.cents format */
+	val validAmountString = Constraint[String]("forms.invalid.amount") { str =>
+		str match {
+			case validAmountStringRE(dollars, cents) => Valid
+			case _ => Invalid(ValidationError("forms.invalid.amount", str))
+		}
+	}
+
+	/** Maps a USD currency string to the number of cents it represents */
+	def amountToCents: Mapping[Long] = {
+		text.verifying(validAmountString).transform(
+			{ str =>
+				{
+					val validAmountStringRE(d, c) = str
+					(d.toLong * 100) + c.toLong
+				}
+			},
+			{ long => "%d.%d".format((long / 100), long - ((long / 100) * 100)) }
+		)
+	}
+
 }

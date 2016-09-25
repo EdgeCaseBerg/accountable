@@ -57,4 +57,31 @@ class PackageTest extends FlatSpec with Matchers with OptionValues {
 		assert(testForm.bind(Map("d" -> "2009-03-01")).errors.isEmpty)
 	}
 
+	it should "provide a constraint to confirm currency strings without cents are invalid" in {
+		validAmountString("10") match {
+			case Valid => fail("constraint passed when it should have failed")
+			case Invalid(errors) => {
+				assert(!errors.isEmpty)
+				assert(errors.find(_.message == "forms.invalid.amount").isDefined)
+			}
+		}
+	}
+
+	it should "provide a constraint to confirm currency strings without any dollars are invalid" in {
+		validAmountString(".01") match {
+			case Valid => fail("constraint passed when it should have failed")
+			case Invalid(errors) => {
+				assert(!errors.isEmpty)
+				assert(errors.find(_.message == "forms.invalid.amount").isDefined)
+			}
+		}
+	}
+
+	it should "provide a constraint to confirm currency strings with a dollars & cents are valid" in {
+		validAmountString("10.23") match {
+			case Valid => succeed
+			case Invalid(errors) => fail("Constraint failed when it should have passed")
+		}
+	}
+
 }
