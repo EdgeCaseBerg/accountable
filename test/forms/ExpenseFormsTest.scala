@@ -20,7 +20,7 @@ class ExpenseFormsTest extends FlatSpec with Matchers with OptionValues {
 			formWithErrors => fail(formWithErrors.errors.mkString),
 			tuple => {
 				val (expense, maybeGroupId) = tuple
-				assertResult(Option.empty[UUID])(maybeGroupId.value)
+				assertResult(Option.empty[UUID])(maybeGroupId)
 				assertResult(classOf[Expense])(expense.getClass())
 			}
 		)
@@ -31,7 +31,7 @@ class ExpenseFormsTest extends FlatSpec with Matchers with OptionValues {
 			formWithErrors => fail(formWithErrors.errors.mkString),
 			tuple => {
 				val (expense, maybeGroupId) = tuple
-				assertResult(validDefaults("groupId"))(maybeGroupId.value)
+				assertResult(validDefaults("groupId"))(maybeGroupId.value.toString)
 			}
 		)
 	}
