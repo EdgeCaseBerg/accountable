@@ -31,4 +31,12 @@ class TimeUtilsTest extends FlatSpec with Matchers {
 			}
 		}
 	}
+
+	"html5StringToEpochSecond" should "convert 2001-09-11 to 1000166400" in {
+		assertResult(1000166400)(html5StringToEpochSecond("2001-09-11"))
+	}
+
+	"epochSecondsToHtml5DateString" should "convert 1000166400 to 2001-09-11" in {
+		assertResult("2001-09-11")(epochSecondsToHtml5DateString(1000166400))
+	}
 }
