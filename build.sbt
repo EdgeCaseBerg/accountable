@@ -27,7 +27,8 @@ libraryDependencies ++= Seq(
 	"org.scalikejdbc" %% "scalikejdbc" % "2.4.2",
 	"mysql" % "mysql-connector-java" % "5.1.+",
 	"org.flywaydb" % "flyway-core" % "4.0",
-	"com.github.pathikrit" %% "better-files" % "2.16.0"
+	"com.github.pathikrit" %% "better-files" % "2.16.0",
+	filters
 )
 
 scalariformPreferences := scalariformPreferences.value
