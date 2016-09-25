@@ -16,7 +16,7 @@ class ExpenseFormsTest extends FlatSpec with Matchers with OptionValues {
 	)
 
 	"The create expense form" should "map fields to a tuple of Expense and None if no groupId is given" in {
-		createExpenseForm.bind(validDefaults - "dateOccured").fold(
+		createExpenseForm.bind(validDefaults - "groupId").fold(
 			formWithErrors => fail(formWithErrors.errors.mkString),
 			tuple => {
 				val (expense, maybeGroupId) = tuple
