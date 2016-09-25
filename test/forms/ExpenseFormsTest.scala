@@ -74,7 +74,7 @@ class ExpenseFormsTest extends FlatSpec with Matchers with OptionValues {
 			formWithErrors => fail(formWithErrors.errors.mkString),
 			tuple => {
 				val (expense, maybeGroupId) = tuple
-				assertResult(1474675200)(expense.dateOccured)
+				assertResult(1467072000)(expense.dateOccured)
 			}
 		)
 	}
