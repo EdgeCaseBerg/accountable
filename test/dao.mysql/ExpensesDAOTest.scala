@@ -1,6 +1,5 @@
-package utils
+package dao.mysql
 
-import dao.mysql._
 import dao.exceptions._
 import models.domain._
 
