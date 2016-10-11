@@ -1,8 +1,12 @@
 @()
 <nav>
 	<ul>
-		<li>This week summary</li>
-		<li>This week's expenses</li>
+		<li>
+			<a href="@controller.routes.ExpenseController.summarizeWeeksExpenses">This week summary</a>
+		</li>
+		<li>
+			<a href="@controller.routes.ExpenseController.listCurrentExpenses">This week's expenses</a>
+		</li>
 		<li>Create Expense</li>
 		<li>Manage Groups</li>
 		<!-- 
