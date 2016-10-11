@@ -1,6 +1,6 @@
 @import common.page
 @(expenses: List[Expense])
 
-@page {
+@page("Current Expenses") {
 	@expenses.mkString(",")
 }
