@@ -15,7 +15,7 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 	def listCurrentExpenses = Action.async {
 		val listOfCurrentWeeksCurrentExpenses = expenseManagementService.listCurrentWeeksCurrentExpenses()
 		listOfCurrentWeeksCurrentExpenses.map { expenses =>
-			Ok(expenses.mkString(","))
+			Ok(views.html.currentExpenses(expenses))
 		}.recover {
 			case NonFatal(e) => {
 				BadRequest("Could not load this weeks expenses").flashing("error" -> e.getMessage())

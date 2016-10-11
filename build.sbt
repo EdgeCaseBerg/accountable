@@ -55,3 +55,5 @@ flywayLocations := Seq("filesystem:conf/db/migration")
 javaOptions in Test ++= Seq("-Dconfig.file=conf/test.conf", "-Duser.timezone=UTC")
 
 javaOptions in Runtime += "-Duser.timezone=UTC"
+
+TwirlKeys.templateImports += "models.domain._"
