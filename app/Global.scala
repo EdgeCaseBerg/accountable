@@ -5,6 +5,7 @@ import dao.mysql.MySQLDatabaseParameters
 import com.google.inject.Guice
 import org.flywaydb.core.Flyway
 import play.api.{ GlobalSettings, Application, Logger }
+import scala.util.control.NonFatal
 
 object Global extends GlobalSettings {
 
@@ -16,15 +17,21 @@ object Global extends GlobalSettings {
 
 	override def onStart(app: Application) {
 		Logger.info("Starting application")
-		val dbParams = getInstance(classOf[MySQLDatabaseParameters])
-		val flyway = new Flyway();
-		flyway.setDataSource(dbParams.url, dbParams.user, dbParams.password, "SELECT 1;")
-		val totalNumberOfMigrations = flyway.info().all().size
-		val numMigrationsToBeApplied = flyway.info().pending().size
-		Logger.info(s"$totalNumberOfMigrations total migrations")
-		Logger.info(s"$numMigrationsToBeApplied migration(s) to be applied")
-		flyway.migrate()
-		Logger.info("Application boot finishing")
+		try {
+			val dbParams = getInstance(classOf[MySQLDatabaseParameters])
+			val flyway = new Flyway();
+			flyway.setDataSource(dbParams.url, dbParams.user, dbParams.password, "SELECT 1;")
+			val totalNumberOfMigrations = flyway.info().all().size
+			val numMigrationsToBeApplied = flyway.info().pending().size
+			Logger.info(s"$totalNumberOfMigrations total migrations")
+			Logger.info(s"$numMigrationsToBeApplied migration(s) to be applied")
+			flyway.migrate()
+			Logger.info("Application boot finishing")
+		} catch {
+			case NonFatal(e) =>
+				Logger.error("Could not migrate database, starting application with unmigrated database...")
+				Logger.error(e.getMessage())
+		}
 	}
 
 }
