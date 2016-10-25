@@ -1,0 +1,8 @@
+@import common.page
+@(errorMessage: String)(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
+
+@page("An error occured") {
+	<div class="error general">
+	@errorMessage
+	</div>
+}
