@@ -1,7 +1,7 @@
 @(templateNotification: List[TemplateNotification])(implicit lang: Lang)
 <section id="notifications">
 	<ul>
-		@templateNotification.foreach { notification =>
+		@templateNotification.map { notification =>
 			@notification match {
 				case TemplateNotification(msgKey, ErrorNotification) => {<li class="error">@Messages(msgKey, notification.msgArgs:_*)</li>}
 				case TemplateNotification(msgKey, InfoNotification) => {<li class="info">@Messages(msgKey, notification.msgArgs:_*)</li>}
