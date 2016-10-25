@@ -8,3 +8,5 @@ addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.5.1")
 
 addSbtPlugin("org.flywaydb" % "flyway-sbt" % "4.0")
 
+addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.0")
+

@@ -4,3 +4,6 @@ GET /current/summary @controller.ExpenseController.summarizeWeeksExpenses
 
 GET /expenses/new @controller.ExpenseController.showCreateExpenseForm
 POST /expenses/create @controller.ExpenseController.createExpense
+
+
+GET /assets/*file controllers.Assets.at(path="/public", file)
