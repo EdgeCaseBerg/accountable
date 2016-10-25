@@ -63,3 +63,7 @@ TwirlKeys.templateImports ++= Seq(
 	"models.view._",
 	"play.api.i18n.{Messages, Lang}"
 )
+
+includeFilter in (Assets, LessKeys.less) := "*.less"
+
+excludeFilter in (Assets, LessKeys.less) := "_*.less"
