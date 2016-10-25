@@ -56,4 +56,8 @@ javaOptions in Test ++= Seq("-Dconfig.file=conf/test.conf", "-Duser.timezone=UTC
 
 javaOptions in Runtime += "-Duser.timezone=UTC"
 
-TwirlKeys.templateImports += "models.domain._"
+TwirlKeys.templateImports ++= Seq(
+	"models.domain._",
+	"models.view._",
+	"play.api.i18n.{Messages, Lang}"
+)

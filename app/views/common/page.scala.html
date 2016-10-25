@@ -1,4 +1,4 @@
-@(title: String = "Accountable")(content: Html)
+@(title: String = "Accountable")(content: Html)(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -7,6 +7,16 @@
 	</head>
 	<body>
 		@navigation()
+		<section id="notifications">
+			<ul>
+				@notifications.foreach {
+					case TemplateNotification(msgKey, ErrorNotification) => {<li class="error">@Messages(msgKey)</li>}
+					case TemplateNotification(msgKey, InfoNotification) => {<li class="info">@Messages(msgKey)</li>}
+				}
+			</ul>
+		</section>
+		<section>
 		@content
+		</section>
 	</body>
 </html>

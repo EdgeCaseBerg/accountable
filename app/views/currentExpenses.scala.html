@@ -1,5 +1,5 @@
 @import common.page
-@(expenses: List[Expense])
+@(expenses: List[Expense])(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
 
 @page("Current Expenses") {
 	@expenses.mkString(",")
