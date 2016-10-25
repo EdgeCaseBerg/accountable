@@ -56,6 +56,8 @@ javaOptions in Test ++= Seq("-Dconfig.file=conf/test.conf", "-Duser.timezone=UTC
 
 javaOptions in Runtime += "-Duser.timezone=UTC"
 
+scalacOptions ++= Seq("-feature")
+
 TwirlKeys.templateImports ++= Seq(
 	"models.domain._",
 	"models.view._",
