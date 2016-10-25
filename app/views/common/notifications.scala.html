@@ -1,0 +1,9 @@
+@(templateNotification: List[TemplateNotification])(implicit lang: Lang)
+<section id="notifications">
+	<ul>
+		@templateNotification.foreach {
+			case TemplateNotification(msgKey, ErrorNotification) => {<li class="error">@Messages(msgKey)</li>}
+			case TemplateNotification(msgKey, InfoNotification) => {<li class="info">@Messages(msgKey)</li>}
+		}
+	</ul>
+</section>
