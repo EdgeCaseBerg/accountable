@@ -1,2 +1,3 @@
 forms.invalid.uuid={0} is not a valid UUID
 forms.invalid.html5Date={0} is not a valid date
+views.error=An unknown error occured
