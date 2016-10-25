@@ -7,20 +7,17 @@ import scala.util.control.NonFatal
 import scala.concurrent.{ ExecutionContext, Future }
 import service._
 import models.domain._
+import models.view._
 import forms.ExpenseForms
 
-class ExpenseController @Inject() (expenseManagementService: ExpenseManagementService, executionContext: ExecutionContext) extends Controller {
+class ExpenseController @Inject() (expenseManagementService: ExpenseManagementService, executionContext: ExecutionContext) extends NotifyingController {
 	implicit val ec = executionContext
 
-	def listCurrentExpenses = Action.async {
+	def listCurrentExpenses = Action.async { implicit request =>
 		val listOfCurrentWeeksCurrentExpenses = expenseManagementService.listCurrentWeeksCurrentExpenses()
 		listOfCurrentWeeksCurrentExpenses.map { expenses =>
 			Ok(views.html.currentExpenses(expenses))
-		}.recover {
-			case NonFatal(e) => {
-				BadRequest("Could not load this weeks expenses").flashing("error" -> e.getMessage())
-			}
-		}
+		}.recover(withErrorPage("Could not load this weeks expenses"))
 	}
 
 	def summarizeWeeksExpenses = Action.async {
