@@ -45,4 +45,10 @@ object Global extends GlobalSettings {
 		}
 	}
 
+	/** Handle 404's */
+	override def onHandlerNotFound(request: RequestHeader) = {
+		implicit val notifications = List.empty[TemplateNotification]
+		Future.successful(Results.NotFound(views.html.errorPage(s"Sorry, the page you requested does not exist!")))
+	}
+
 }
