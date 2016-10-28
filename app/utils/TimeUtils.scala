@@ -26,6 +26,16 @@ object TimeUtils {
 		Instant.from(startOfTheWeek)
 	}
 
+	/** Helper to quickly get the current epoch second */
+	def now(): Long = {
+		Instant.now().getEpochSecond()
+	}
+
+	/** Helper to get the current epoch second in an html5 format */
+	def html5Now(): String = {
+		epochSecondsToHtml5DateString(now)
+	}
+
 	/** Implicit to quickly convert a long into an Instant value
 	 *
 	 *  @param long The Long to convert by calling #toInstant on it
