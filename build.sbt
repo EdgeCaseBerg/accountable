@@ -23,7 +23,7 @@ libraryDependencies ++= Seq(
 	"com.google.inject.extensions" % "guice-throwingproviders" % "4.1.0",
 	"com.typesafe" % "config" % "1.2.1",
 	"com.typesafe.play" %% "anorm" % "2.3.+",
-	"com.zaxxer" % "HikariCP" % "2.4.5",
+	"com.zaxxer" % "HikariCP" % "2.5.1",
 	"org.scalikejdbc" %% "scalikejdbc" % "2.4.2",
 	"mysql" % "mysql-connector-java" % "5.1.+",
 	"org.flywaydb" % "flyway-core" % "4.0",
