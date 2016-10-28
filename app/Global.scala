@@ -3,7 +3,7 @@
 import modules._
 import models.view._
 import play.api.mvc.{ RequestHeader, Results }
-import dao.mysql.MySQLDatabaseParameters
+import dao.mysql.{ MySQLDatabaseParameters, MySQLConnector }
 import com.google.inject.Guice
 import org.flywaydb.core.Flyway
 import play.api.{ GlobalSettings, Application, Logger }
@@ -49,6 +49,17 @@ object Global extends GlobalSettings {
 	override def onHandlerNotFound(request: RequestHeader) = {
 		implicit val notifications = List.empty[TemplateNotification]
 		Future.successful(Results.NotFound(views.html.errorPage(s"Sorry, the page you requested does not exist!")))
+	}
+
+	/** Shutdown resources used by the application
+	 *  @param app The application being stopped
+	 *  @note If I upgrade to 2.4 I can handle this better within the MySQLConnector itself (https://www.playframework.com/documentation/2.4.x/ScalaDependencyInjection#Stopping/cleaning-up)
+	 */
+	override def onStop(app: Application) {
+		Logger.info("Application shutting down...");
+		Logger.info("closing database connections")
+		val connector = getInstance(classOf[MySQLConnector])
+		connector.shutdown
 	}
 
 }

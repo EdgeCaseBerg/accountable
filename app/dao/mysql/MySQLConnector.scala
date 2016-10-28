@@ -54,6 +54,10 @@ class MySQLConnector @Inject() (
 		new HikariDataSource(getHikariConfig())
 	}
 
+	/** Close the underlying datasource and clean up connections
+	 */
+	def shutdown = dataSource.asInstanceOf[HikariDataSource].close()
+
 	ConnectionPool.singleton(new DataSourceConnectionPool(dataSource))
 
 	/** Execute a block of code, in the scope of a JDBC connection.
