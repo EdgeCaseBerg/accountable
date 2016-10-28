@@ -10,6 +10,11 @@ import play.api.data.validation._
  */
 object ExpenseForms {
 
+	/** Type Alias for form.
+	 *  @note This is useful for defining forms in your templates form: Form[ExpenseForm] because if we ever have to change the type of the form mapping, the templates won't have to change.
+	 */
+	type ExpenseForm = (Expense, Option[UUID])
+
 	/** Private method to convert a mapping form into an Expense + optioanl groupId tuple
 	 *  @note This is defined here instead of inline with the form for readability
 	 */
