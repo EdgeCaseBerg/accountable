@@ -33,10 +33,3 @@ Core functionality done by this point, work on features:
 - more advanced billing system formulas
 
 [Handy post]:http://manuel.bernhardt.io/2014/04/23/a-handful-akka-techniques/
-
-### Minor notes to self:
-
-- Need to deal with shutting down mysql connections on app end
-	- Check `show processlist`, no threads
-	- `~run`, check `show processlist`, see threads
-	- `enter` app stops running, check `show processlist` should not see threads but do
