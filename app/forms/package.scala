@@ -18,7 +18,7 @@ package object forms {
 	/** Constrant to define what a valid UUID is when parsing forms
 	 *  @note To set the error message, use the Messages file and set forms.invalid.uuid
 	 */
-	val validUUID = Constraint[String]("forms.invalid.uuid") { str =>
+	val validUUID = Constraint[String]("forms.constraint.uuid") { str =>
 		Try(UUID.fromString(str)) match {
 			case Success(uuid) => Valid
 			case Failure(e) => Invalid(ValidationError("forms.invalid.uuid", str))
@@ -33,7 +33,7 @@ package object forms {
 	/** Constraint defining a valid HTML5 date inputs value
 	 *  @note To set the error message use the Messages file and set forms.invalid.html5Date
 	 */
-	val validHtml5Date = Constraint[String]("forms.invalid.html5Date") { str =>
+	val validHtml5Date = Constraint[String]("forms.constraint.html5Date") { str =>
 		Try(LocalDate.parse(str, TimeUtils.html5DateFormat)) match {
 			case Success(localDate) => Valid
 			case Failure(e) => Invalid(ValidationError("forms.invalid.html5Date", str))
@@ -52,7 +52,7 @@ package object forms {
 	private val validAmountStringRE = "([0-9]+)\\.([0-9]{2})".r
 
 	/** Constraint to determine if something is in proper dollar.cents format */
-	val validAmountString = Constraint[String]("forms.invalid.amount") { str =>
+	val validAmountString = Constraint[String]("forms.constraint.amount") { str =>
 		str match {
 			case validAmountStringRE(dollars, cents) => Valid
 			case _ => Invalid(ValidationError("forms.invalid.amount", str))
