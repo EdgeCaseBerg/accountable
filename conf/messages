@@ -1,3 +1,8 @@
 forms.invalid.uuid={0} is not a valid UUID
 forms.invalid.html5Date={0} is not a valid date
+forms.invalid.amount = {0} is not a valid amount
 views.error=An unknown error occured: {0}
+
+forms.constraint.uuid=Please enter a valid UUID
+forms.constraint.html5Date=Enter a date like 1/23/16
+forms.constraint.amount=Enter an amount with dollars and cents, like 1.00
