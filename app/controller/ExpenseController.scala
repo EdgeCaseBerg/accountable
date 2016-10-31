@@ -63,7 +63,6 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 					maybeGroupId.fold {
 						expenseManagementService.createExpense(newExpense).map { createdExpense =>
 							Redirect(routes.ExpenseController.listCurrentExpenses()).flashing("info" -> "views.success.expense.create")
-							//To-do: Redirect() to create form if we're making another, or redirect back to the summary for the week of this expense
 						}.recover {
 							withErrorPage("Could not create the expense")
 						}
