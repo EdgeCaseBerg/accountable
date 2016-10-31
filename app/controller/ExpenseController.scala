@@ -63,9 +63,7 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 					maybeGroupId.fold {
 						expenseManagementService.createExpense(newExpense).map { createdExpense =>
 							Redirect(routes.ExpenseController.listCurrentExpenses()).flashing("info" -> "views.success.expense.create")
-						}.recover {
-							withErrorPage("Could not create the expense")
-						}
+						}.recover(withErrorPage("Could not create the expense"))
 					} { groupId =>
 						expenseManagementService.listExpenseGroups.recover {
 							case NonFatal(e) => List.empty[ExpenseGroup]
