@@ -1,0 +1,29 @@
+@import common.page
+@(
+	possibleGroups: List[ExpenseGroup], 
+	form: Form[forms.ExpenseForms.ExpenseForm]
+)(implicit request: RequestHeader, notifications: List[TemplateNotification] = Nil)
+
+@page("Create Expense") {
+	@helper.form(controller.routes.ExpenseController.createExpense()) {
+		@helper.CSRF.formField
+
+		@if(form.hasGlobalErrors) {
+			<ul>
+				@for(error <- form.globalErrors) {
+				<li>@error.message</li>
+				}
+			</ul>
+		}
+
+		@* If no groups exist don't bother showing the list to select *@
+		@possibleGroups.headOption.map { _ =>
+			@helper.select(form("groupId"), options = possibleGroups.map(g => (g.groupId.toString, g.name)))
+		}
+
+		@helper.inputText(form("name"))
+		@helper.inputDate(form("dateOccured"))
+		@helper.inputText(form("amount"))
+		<input type=submit value="Create" />
+	}
+}

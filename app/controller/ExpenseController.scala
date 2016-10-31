@@ -8,6 +8,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import service._
 import models.domain._
 import models.view._
+import utils.TimeUtils
 import forms.ExpenseForms
 
 class ExpenseController @Inject() (expenseManagementService: ExpenseManagementService, executionContext: ExecutionContext) extends NotifyingController {
@@ -28,10 +29,15 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 
 	def showCreateExpenseForm = CSRFAddToken {
 		Action.async { implicit request =>
-			expenseManagementService.listExpenseGroups.recover {
-				case NonFatal(e) => List.empty[ExpenseGroup]
-			}.map { expenseGroups =>
-				Ok("Add expense to any of the groups. " + expenseGroups.mkString(","))
+			val futureExpenseGroups = expenseManagementService.listExpenseGroups
+			val defaultForm = ExpenseForms.createExpenseForm.bind(Map("dateOccured" -> TimeUtils.html5Now))
+			futureExpenseGroups.map { expenseGroups =>
+				Ok(views.html.createForm(expenseGroups, defaultForm))
+			}.recover {
+				case NonFatal(e) => {
+					implicit val notifications = List(CommonTemplateNotifications.TMP_GROUP_LOAD_FAIL)
+					Ok(views.html.createForm(Nil, defaultForm))
+				}
 			}
 		}
 	}
@@ -40,7 +46,13 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 		Action.async { implicit request =>
 			ExpenseForms.createExpenseForm.bindFromRequest.fold(
 				formWithErrors => {
-					Future.successful(BadRequest(formWithErrors.errors.mkString(",")))
+					expenseManagementService.listExpenseGroups.map { expenseGroups =>
+						BadRequest(views.html.createForm(expenseGroups, formWithErrors))
+					}.recover {
+						case NonFatal(e) =>
+							implicit val notifications = List(CommonTemplateNotifications.TMP_GROUP_LOAD_FAIL)
+							BadRequest(views.html.createForm(Nil, formWithErrors))
+					}
 				},
 				boundForm => {
 					val (newExpense, maybeGroupId) = boundForm
