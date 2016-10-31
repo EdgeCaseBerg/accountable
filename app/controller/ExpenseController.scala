@@ -17,25 +17,29 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 	def listCurrentExpenses = Action.async { implicit request =>
 		val listOfCurrentWeeksCurrentExpenses = expenseManagementService.listCurrentWeeksCurrentExpenses()
 		listOfCurrentWeeksCurrentExpenses.map { expenses =>
+			implicit val notifications = flash2TemplateNotification
 			Ok(views.html.currentExpenses(expenses))
 		}.recover(withErrorPage("Could not load this weeks expenses"))
 	}
 
-	def summarizeWeeksExpenses = Action.async {
+	def summarizeWeeksExpenses = Action.async { implicit request =>
 		expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup.map { expensesByGroup =>
+			implicit val notifications = flash2TemplateNotification
 			Ok(expensesByGroup.toString)
 		}.recover(withErrorPage("Could not load this weeks expenses"))
 	}
 
 	def showCreateExpenseForm = CSRFAddToken {
 		Action.async { implicit request =>
+			val notificationsFromFlash = flash2TemplateNotification
 			val futureExpenseGroups = expenseManagementService.listExpenseGroups
 			val defaultForm = ExpenseForms.createExpenseForm.bind(Map("dateOccured" -> TimeUtils.html5Now))
 			futureExpenseGroups.map { expenseGroups =>
+				implicit val notifications = flash2TemplateNotification
 				Ok(views.html.createForm(expenseGroups, defaultForm))
 			}.recover {
 				case NonFatal(e) => {
-					implicit val notifications = List(CommonTemplateNotifications.TMP_GROUP_LOAD_FAIL)
+					implicit val notifications = List(CommonTemplateNotifications.TMP_GROUP_LOAD_FAIL) ++ notificationsFromFlash
 					Ok(views.html.createForm(Nil, defaultForm))
 				}
 			}
@@ -58,7 +62,7 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 					val (newExpense, maybeGroupId) = boundForm
 					maybeGroupId.fold {
 						expenseManagementService.createExpense(newExpense).map { createdExpense =>
-							Ok("created expense! " + createdExpense)
+							Redirect(routes.ExpenseController.listCurrentExpenses()).flashing("info" -> "views.success.expense.create")
 							//To-do: Redirect() to create form if we're making another, or redirect back to the summary for the week of this expense
 						}.recover {
 							withErrorPage("Could not create the expense")

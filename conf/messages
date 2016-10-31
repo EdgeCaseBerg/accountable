@@ -2,8 +2,10 @@ forms.invalid.uuid={0} is not a valid UUID
 forms.invalid.html5Date={0} is not a valid date
 forms.invalid.amount = {0} is not a valid amount
 
+views.success.expense.create=Successfully created expense
 views.error=An unknown error occured: {0}
 views.tmp.grouploadfail=Could not load expense groups, please refresh the page to try again
+
 
 forms.constraint.uuid=Please enter a valid UUID
 forms.constraint.html5Date=Enter a date like 1/23/16
