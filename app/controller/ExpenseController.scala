@@ -68,12 +68,14 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 						expenseManagementService.listExpenseGroups.recover {
 							case NonFatal(e) => List.empty[ExpenseGroup]
 						}.flatMap { groups =>
-							groups.find(_.groupId == groupId).fold(Future.successful(BadRequest(s"Group ${groupId} does not exist"))) { groupToAddTo =>
+							groups.find(_.groupId == groupId).fold {
+								implicit val noGroupNotifications = CommonTemplateNotifications.GROUP_ID_NOT_FOUND(groupId)
+								val savedFormValues = ExpenseForms.createExpenseForm.fill(boundForm)
+								Future.successful(BadRequest(views.html.createForm(groups, savedFormValues)))
+							} { groupToAddTo =>
 								expenseManagementService.createExpenseAndAddToGroup(newExpense, groupToAddTo).map { _ =>
-									Ok("Added expense to group")
-								}.recover {
-									withErrorPage("Could not create the expense and add it to the group")
-								}
+									Redirect(routes.ExpenseController.listCurrentExpenses()).flashing("info" -> "views.success.expense.create")
+								}.recover(withErrorPage("Could not create the expense and add it to the group"))
 							}
 						}
 					}
