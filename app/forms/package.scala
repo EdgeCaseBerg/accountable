@@ -6,7 +6,7 @@ import java.util.UUID
 import java.time.LocalDate
 
 import models.domain._
-import utils.TimeUtils
+import utils.{ TimeUtils, DisplayUtils }
 
 import scala.util.{ Try, Success, Failure }
 
@@ -68,7 +68,7 @@ package object forms {
 					(d.toLong * 100) + c.toLong
 				}
 			},
-			{ long => "%d.%d".format((long / 100), long - ((long / 100) * 100)) }
+			DisplayUtils.centsToDollars _
 		)
 	}
 
