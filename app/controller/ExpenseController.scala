@@ -25,7 +25,7 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 	def summarizeWeeksExpenses = Action.async { implicit request =>
 		expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup.map { expensesByGroup =>
 			implicit val notifications = flash2TemplateNotification
-			Ok(expensesByGroup.toString)
+			Ok(expensesByGroup.toString) // To-Do: make a template for this 
 		}.recover(withErrorPage("Could not load this weeks expenses"))
 	}
 
