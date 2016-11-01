@@ -1,5 +1,5 @@
 @import common.page
-@import utils.TimeUtils
+@import utils._
 @(expenses: List[Expense])(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
 
 @page("Current Expenses") {
@@ -19,8 +19,7 @@
 				<tr>
 					<td>@TimeUtils.epochSecondsToHtml5DateString(expense.dateOccured)</td>
 					<td>@expense.name</td>
-					@* To-do: Create util and format amount in cents *@
-					<td>@expense.amountInCents</td>
+					<td>$@DisplayUtils.centsToDollars(expense.amountInCents)</td>
 				</tr>
 			}
 		</tbody>
