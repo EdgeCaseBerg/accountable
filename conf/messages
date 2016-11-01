@@ -4,9 +4,10 @@ forms.invalid.amount = {0} is not a valid amount
 
 views.error=An unknown error occured: {0}
 views.error.groupNotFound=Group with ID {0} was not found, this issue may be temporary please try again
-views.success.expense.create=Successfully created expense
-views.tmp.grouploadfail=Could not load expense groups, please refresh the page to try again
 
+views.success.expense.create=Successfully created expense
+
+views.tmp.grouploadfail=Could not load expense groups, please refresh the page to try again
 
 forms.constraint.uuid=Please enter a valid UUID
 forms.constraint.html5Date=Enter a date like 1/23/16
