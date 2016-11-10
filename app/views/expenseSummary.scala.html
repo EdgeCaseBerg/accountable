@@ -3,31 +3,35 @@
 @(expensesByGroup: Map[ExpenseGroup, List[Expense]])(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
 
 @page("Expenses summary") {
-	<table>
+	<table summary="This table shows expenses broken down by which group they are in">
+		@* TODO: Once we update to list by date, make this use date instead of 'current' *@
+		<caption>Current expense's by group</caption>
 		<thead>
-			<th>Date Occured</th>
-			<th>Name</th>
-			<th>Amount Spent</th>
+			<th scope="col"></th>
+			<th scope="col">Date Occured</th>
+			<th scope="col">Name</th>
+			<th scope="col">Amount Spent</th>
 		</thead>
 		@if(expensesByGroup.isEmpty) {
 		<tbody>
 			<tr>
-				<td colspan="3">No expense groups or expenses</td>
+				<td colspan="4">No expense groups or expenses</td>
 			</tr>
 		</tbody>
 		}
 		@expensesByGroup.map { case (group, expenses) =>
 		<tbody>
-			<tr>
-				<td colspan="3">@group.name</td>
-			</tr>
 			@if(expenses.isEmpty) {
 				<tr>
+					<th scope="row">@group.name</th>
 					<td colspan="3">No expenses exist yet</td>
 				</tr>
 			}
-			@expenses.map { expense =>
+			@expenses.zipWithIndex.map { case (expense, idx) =>
 				<tr>
+					@if(idx == 0) {
+						<th scope="row" rowspan="@{expenses.size}">@group.name</th>
+					}
 					<td>@TimeUtils.epochSecondsToHtml5DateString(expense.dateOccured)</td>
 					<td>@expense.name</td>
 					<td>$@DisplayUtils.centsToDollars(expense.amountInCents)</td>
