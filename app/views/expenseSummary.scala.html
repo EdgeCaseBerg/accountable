@@ -3,7 +3,7 @@
 @(expensesByGroup: Map[ExpenseGroup, List[Expense]])(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
 
 @page("Expenses summary") {
-	<table summary="This table shows expenses broken down by which group they are in">
+	<table class="summary" summary="This table shows expenses broken down by which group they are in">
 		@* TODO: Once we update to list by date, make this use date instead of 'current' *@
 		<caption>Current expense's by group</caption>
 		<thead>
@@ -28,7 +28,7 @@
 				</tr>
 			}
 			@expenses.zipWithIndex.map { case (expense, idx) =>
-				<tr>
+				<tr @if(idx % 2 == 0) {class="alt"}>
 					@if(idx == 0) {
 						<th scope="row" rowspan="@{expenses.size}">@group.name</th>
 					}

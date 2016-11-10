@@ -1,0 +1,63 @@
+@solidBorder: medium solid darkgrey;
+@thinBorder: thin dotted grey;
+
+/** Basic Table CSS. Style headers, rows, and caption */
+table {
+	border-collapse: collapse;
+	th, td {
+		padding: 0.5em;
+		border: @thinBorder;
+		color: maroon;
+	}
+	thead {
+		th {
+			border-bottom: @solidBorder;
+			color: white;
+			background-color: darksalmon;
+		}
+	}
+	tbody {
+		tr:hover {
+			td {
+				background-color: black;
+				color: white;
+			}
+		}
+	}
+	caption {
+		caption-side: bottom;
+		text-align: right;
+		font-style: italic;
+	}
+}
+/** A summary table has th's within the tbody so we have to add in 
+ *  thicker lines to distinguish them from the data.
+ */
+table.summary {
+	thead {
+		th {
+			border: none;
+			border-bottom: @solidBorder;
+			border-right: @solidBorder;
+			background-color: transparent;
+		}
+		th+th {
+			border-right: @thinBorder;
+			border-top: @thinBorder;
+			color: black;
+			background-color: darksalmon;
+		}
+	}
+	tbody {
+		tr {
+			th  {
+				border-right: @solidBorder;
+				background-color: bisque;
+			}
+			background-color: beige;
+		}
+		tr.alt {
+			background-color: lightgrey;
+		}
+	}
+}
