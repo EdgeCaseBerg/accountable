@@ -1,0 +1,39 @@
+@import common.page
+@import utils._
+@(expensesByGroup: Map[ExpenseGroup, List[Expense]])(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
+
+@page("Expenses summary") {
+	<table>
+		<thead>
+			<th>Date Occured</th>
+			<th>Name</th>
+			<th>Amount Spent</th>
+		</thead>
+		@if(expensesByGroup.isEmpty) {
+		<tbody>
+			<tr>
+				<td colspan="3">No expense groups or expenses</td>
+			</tr>
+		</tbody>
+		}
+		@expensesByGroup.map { case (group, expenses) =>
+		<tbody>
+			<tr>
+				<td colspan="3">@group.name</td>
+			</tr>
+			@if(expenses.isEmpty) {
+				<tr>
+					<td colspan="3">No expenses exist yet</td>
+				</tr>
+			}
+			@expenses.map { expense =>
+				<tr>
+					<td>@TimeUtils.epochSecondsToHtml5DateString(expense.dateOccured)</td>
+					<td>@expense.name</td>
+					<td>$@DisplayUtils.centsToDollars(expense.amountInCents)</td>
+				</tr>
+			}
+		</tbody>
+		}
+	</table>
+}
