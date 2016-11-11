@@ -1,5 +1,5 @@
-@solidBorder: medium solid darkgrey;
-@thinBorder: thin dotted grey;
+@solidBorder: medium solid @color6;
+@thinBorder: thin dotted @color9;
 
 /** Basic Table CSS. Style headers, rows, and caption */
 table {
@@ -7,20 +7,27 @@ table {
 	th, td {
 		padding: 0.5em;
 		border: @thinBorder;
-		color: maroon;
+		text-align: center;
 	}
 	thead {
 		th {
 			border-bottom: @solidBorder;
-			color: white;
-			background-color: darksalmon;
+			color: @color1;
+			background-color: @color4;
 		}
 	}
 	tbody {
-		tr:hover {
-			td {
-				background-color: black;
-				color: white;
+		tr {
+			background-color: @color10;
+			&:hover {
+				td {
+					color: white;
+					background-color: @color8;
+				}
+			}
+			&.alt {
+				background-color: darken(@color1, 10);
+				background-color: @color9;
 			}
 		}
 	}
@@ -44,20 +51,16 @@ table.summary {
 		th+th {
 			border-right: @thinBorder;
 			border-top: @thinBorder;
-			color: black;
-			background-color: darksalmon;
+			color: @color1;
+			background-color: @color4;
 		}
 	}
 	tbody {
 		tr {
 			th  {
 				border-right: @solidBorder;
-				background-color: bisque;
+				background-color: @color1;
 			}
-			background-color: beige;
-		}
-		tr.alt {
-			background-color: lightgrey;
 		}
 	}
 }
