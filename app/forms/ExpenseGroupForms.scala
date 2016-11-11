@@ -15,7 +15,7 @@ object ExpenseGroupForms {
 	 */
 	val createExpenseGroupForm = Form[ExpenseGroup](
 		mapping(
-			"name" -> nonEmptyText
+			"name" -> nonEmptyText(maxLength = 64)
 		)(name => ExpenseGroup(name = name))(expenseGroup => Option(expenseGroup.name))
 	)
 }
