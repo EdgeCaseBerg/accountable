@@ -15,8 +15,8 @@
 					<td colspan="3">No expenses exist yet</td>
 				</tr>
 			}
-			@expenses.map { expense =>
-				<tr>
+			@expenses.zipWithIndex.map { case (expense, idx) =>
+				<tr @if(idx % 2 == 0){ class="alt" }>
 					<td>@TimeUtils.epochSecondsToHtml5DateString(expense.dateOccured)</td>
 					<td>@expense.name</td>
 					<td>$@DisplayUtils.centsToDollars(expense.amountInCents)</td>
