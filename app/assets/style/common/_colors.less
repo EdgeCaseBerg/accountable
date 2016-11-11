@@ -11,3 +11,32 @@
 @color8: rgb(139, 76, 103);
 @color9: rgb(239, 241, 147);
 @color10: rgb(242, 238, 210);
+
+
+/** Looping LESS trick to generate pallette selectors for each color */
+.createColors (@index) when (@index > 0) {
+    &[pallette="@{index}"] {
+    	/** Interpolate variable name, then use dynamic variable (@@) to get it */
+    	@x: "color@{index}";
+        background-color: @@x;
+    }
+    /** Recurse */
+    .createColors(@index - 1);
+}
+/** End loop if we hit 0 */
+.createColors (0) {}
+
+/** Debug list of palletes to be shown */
+ul.debug {
+	list-style-type: none;
+	li {
+		border: thin solid black;
+		display: inline-block;
+		width: 100px;
+		height: 100px;
+		text-align: center;
+		color: white;
+		text-shadow: black 2px 2px 2px;
+		.createColors(10);
+	}
+}
