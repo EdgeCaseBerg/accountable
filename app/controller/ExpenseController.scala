@@ -84,6 +84,13 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 		}
 	}
 
+	def listExpenseGroups = Action.async { implicit request =>
+		expenseManagementService.listExpenseGroups().map { expenseGroups =>
+			implicit val notifications = flash2TemplateNotification
+			Ok(views.html.manageGroups(expenseGroups))
+		}.recover(withErrorPage("Could not load the expense groups"))
+	}
+
 	def showCreateExpenseGroupForm = CSRFAddToken {
 		Action { implicit request =>
 			val notificationsFromFlash = flash2TemplateNotification

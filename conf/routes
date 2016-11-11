@@ -5,6 +5,7 @@ GET /current/summary @controller.ExpenseController.summarizeWeeksExpenses
 GET /expenses/new @controller.ExpenseController.showCreateExpenseForm
 POST /expenses/create @controller.ExpenseController.createExpense
 
+GET /groups @controller.ExpenseController.listExpenseGroups
 GET /groups/new @controller.ExpenseController.showCreateExpenseGroupForm
 
 

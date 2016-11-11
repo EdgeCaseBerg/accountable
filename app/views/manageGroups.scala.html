@@ -1,0 +1,55 @@
+@import common.page
+@(expenseGroups: List[ExpenseGroup])(implicit lang: Lang, notification: List[TemplateNotification] = Nil)
+
+@page("Available Expense Groups") {
+	<header>
+		<h2>Manage Expense Groups</h2>
+	</header>
+	<section>
+		<div>
+			<p>
+				An expense group allows you to group expenses together to track the 
+				categories of your expenditures. 
+				@* Once we have the billing system in place we can note how they can 
+				   be used in the calculation of the amount billed 
+				*@
+			</p>
+		</div>
+	</section>
+	<section>
+		<table>
+			<thead>
+				<th>Group Name</th>
+				<th colspan="2">
+					<a href="@controller.routes.ExpenseController.showCreateExpenseGroupForm">
+						Create New Group
+					</a>
+				</th>
+			</thead>
+			<tbody>
+			@if(expenseGroups.isEmpty) {
+			<tr>
+				<td colspan="3">
+					No groups exist. Why don't <a href="@controller.routes.ExpenseController.showCreateExpenseGroupForm">you create one?</a>
+				</td>
+			</tr>
+			}
+			@expenseGroups.zipWithIndex.map { case(expenseGroup, idx) =>
+				<tr @if(idx % 2 == 0){ class="alt" }>
+					<td>@expenseGroup.name</td>
+					<td>
+						<a href="#@expenseGroup.groupId">
+							edit
+						</a>
+					</td>
+					<td>
+						<a href="#@expenseGroup.groupId">
+							delete
+						</a>
+					</td>
+				</tr>
+			}
+			</tbody>
+		</table>
+	</section>
+}
