@@ -84,4 +84,12 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 		}
 	}
 
+	def showCreateExpenseGroupForm = CSRFAddToken {
+		Action { implicit request =>
+			val notificationsFromFlash = flash2TemplateNotification
+			val defaultForm = ExpenseForms.createExpenseForm
+			Ok("Show a form")
+		}
+	}
+
 }
