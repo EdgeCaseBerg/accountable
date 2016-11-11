@@ -100,8 +100,20 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 	}
 
 	def createExpenseGroup = CSRFCheck {
-		Action.async {
-			Future.successful(BadRequest("NOT IMPLEMENTED"))
+		Action.async { implicit request =>
+			ExpenseGroupForms.createExpenseGroupForm.bindFromRequest.fold(
+				formWithErrors => Future.successful(BadRequest(views.html.createExpenseGroupForm(formWithErrors))),
+				boundForm => {
+					expenseManagementService.createNewExpenseGroupWithName(boundForm.name).map { createdExpenseGroup =>
+						Redirect(routes.ExpenseController.listExpenseGroups()).flashing("info" -> "views.success.expensegroup.create")
+					}.recover {
+						case NonFatal(e) => {
+							implicit val notifications = throwable2TemplateNotifications(e)
+							BadRequest(views.html.createExpenseGroupForm(ExpenseGroupForms.createExpenseGroupForm.fill(boundForm)))
+						}
+					}
+				}
+			)
 		}
 	}
 
