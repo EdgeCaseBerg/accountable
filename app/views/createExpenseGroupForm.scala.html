@@ -1,0 +1,21 @@
+@import common.page
+@(
+	form: Form[ExpenseGroup]
+)(implicit request: RequestHeader, notifications: List[TemplateNotification] = Nil)
+
+@page("Create Expense Group") {
+	@helper.form(controller.routes.ExpenseController.createExpenseGroup()) {
+		@helper.CSRF.formField
+
+		@if(form.hasGlobalErrors) {
+			<ul>
+				@for(error <- form.globalErrors) {
+				<li>@error.message</li>
+				}
+			</ul>
+		}
+
+		@helper.inputText(form("name"))
+		<input type=submit value="Create" />
+	}
+}

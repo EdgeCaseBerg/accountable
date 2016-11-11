@@ -9,7 +9,7 @@ import service._
 import models.domain._
 import models.view._
 import utils.TimeUtils
-import forms.ExpenseForms
+import forms.{ ExpenseForms, ExpenseGroupForms }
 
 class ExpenseController @Inject() (expenseManagementService: ExpenseManagementService, executionContext: ExecutionContext) extends NotifyingController {
 	implicit val ec = executionContext
@@ -94,8 +94,14 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 	def showCreateExpenseGroupForm = CSRFAddToken {
 		Action { implicit request =>
 			val notificationsFromFlash = flash2TemplateNotification
-			val defaultForm = ExpenseForms.createExpenseForm
-			Ok("Show a form")
+			val defaultForm = ExpenseGroupForms.createExpenseGroupForm
+			Ok(views.html.createExpenseGroupForm(defaultForm))
+		}
+	}
+
+	def createExpenseGroup = CSRFCheck {
+		Action.async {
+			Future.successful(BadRequest("NOT IMPLEMENTED"))
 		}
 	}
 

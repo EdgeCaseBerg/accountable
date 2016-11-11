@@ -7,6 +7,7 @@ POST /expenses/create @controller.ExpenseController.createExpense
 
 GET /groups @controller.ExpenseController.listExpenseGroups
 GET /groups/new @controller.ExpenseController.showCreateExpenseGroupForm
+POST /groups/create @controller.ExpenseController.createExpenseGroup()
 
 
 GET /assets/*file controllers.Assets.at(path="/public", file)
