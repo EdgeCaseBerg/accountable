@@ -18,7 +18,12 @@
 
 		@* If no groups exist don't bother showing the list to select *@
 		@possibleGroups.headOption.map { _ =>
-			@helper.select(form("groupId"), options = possibleGroups.map(g => (g.groupId.toString, g.name)))
+			@helper.select(form("groupId"), 
+				options = possibleGroups.map(g => (g.groupId.toString, g.name)),
+				'_default -> "...",
+				'_label -> "Group",
+				'_showConstraints -> false
+			)
 		}
 
 		@helper.inputText(form("name"))
