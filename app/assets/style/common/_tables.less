@@ -64,3 +64,14 @@ table.summary {
 		}
 	}
 }
+
+/** Need to drop the color on all but the first th */
+table.manage {
+	thead {
+		th + th {
+			background-color: transparent;
+			border-top: none;
+			border-right: none;
+		}
+	}
+}
