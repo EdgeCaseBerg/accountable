@@ -20,15 +20,17 @@
 		@possibleGroups.headOption.map { _ =>
 			@helper.select(form("groupId"), 
 				options = possibleGroups.map(g => (g.groupId.toString, g.name)),
-				'_default -> "...",
-				'_label -> "Group",
-				'_showConstraints -> false
+				args = constraintsToArgs(form("groupId"),
+					'_default -> "...",
+					'_label -> "Group",
+					'_showConstraints -> false
+				):_*
 			)
 		}
 
-		@helper.inputText(form("name"))
-		@helper.inputDate(form("dateOccured"))
-		@helper.inputText(form("amount"))
+		@helper.inputText(form("name"), args = constraintsToArgs(form("name")):_*)
+		@helper.inputDate(form("dateOccured"), args = constraintsToArgs(form("dateOccured")):_*)
+		@helper.inputText(form("amount"), args = constraintsToArgs(form("amount")):_*)
 		<input type=submit value="Create" />
 	}
 }

@@ -15,7 +15,7 @@
 			</ul>
 		}
 
-		@helper.inputText(form("name"))
+		@helper.inputText(form("name"), args = constraintsToArgs(form("name")):_*)
 		<input type=submit value="Create" />
 	}
 }
