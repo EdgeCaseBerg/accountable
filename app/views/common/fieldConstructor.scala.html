@@ -1,0 +1,33 @@
+@(elements: helper.FieldElements)
+
+@isRequired = @{
+	elements.infos(elements.lang).exists(_ == Messages("constraint.required"))
+}
+
+@wasRequired = @{
+	elements.errors(elements.lang).exists(_ == Messages("error.required"))
+}
+
+<div class="field @if(elements.hasErrors){error}">
+	<label for="@elements.id">
+		@elements.label(elements.lang)
+		@if(isRequired) {
+			<span class="field-required">*</span>
+		}
+	</label>
+	<div class="input @if(wasRequired){required-error}">
+		@elements.input
+		<div class="errors">
+			@elements.errors(elements.lang).filterNot(_ == Messages("error.required")).map { error =>
+			<span class="error">@error</span>
+			}
+		</div>
+		<div class="infos">
+			@elements.infos(elements.lang).filterNot(_ == Messages("constraint.required")).map { info =>
+			<span class="info">
+				@info
+			</span>
+			}
+		</div>
+	</div>
+</div>

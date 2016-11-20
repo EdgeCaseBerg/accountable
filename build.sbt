@@ -61,7 +61,8 @@ scalacOptions ++= Seq("-feature")
 TwirlKeys.templateImports ++= Seq(
 	"models.domain._",
 	"models.view._",
-	"play.api.i18n.{Messages, Lang}"
+	"play.api.i18n.{Messages, Lang}",
+	"models.view.ImplicitFieldConstructorProvider._"
 )
 
 includeFilter in (Assets, LessKeys.less) := "*.less"
