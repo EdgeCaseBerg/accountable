@@ -33,7 +33,7 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 		Action.async { implicit request =>
 			val notificationsFromFlash = flash2TemplateNotification
 			val futureExpenseGroups = expenseManagementService.listExpenseGroups
-			val defaultForm = ExpenseForms.createExpenseForm.bind(Map("dateOccured" -> TimeUtils.html5Now))
+			val defaultForm = ExpenseForms.createExpenseForm.bind(Map("dateOccured" -> TimeUtils.html5Now)).discardingErrors
 			futureExpenseGroups.map { expenseGroups =>
 				implicit val notifications = flash2TemplateNotification
 				Ok(views.html.createForm(expenseGroups, defaultForm))
