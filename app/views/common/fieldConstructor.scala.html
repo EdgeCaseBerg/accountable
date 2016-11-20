@@ -16,12 +16,12 @@
 		}
 	</label>
 	<div class="input @if(wasRequired){required-error}">
-		@elements.input
 		<div class="errors">
 			@elements.errors(elements.lang).filterNot(_ == Messages("error.required")).map { error =>
 			<span class="error">@error</span>
 			}
 		</div>
+		@elements.input
 		<div class="infos">
 			@elements.infos(elements.lang).filterNot(_ == Messages("constraint.required")).map { info =>
 			<span class="info">
