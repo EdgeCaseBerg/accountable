@@ -27,7 +27,7 @@ package object forms {
 
 	/** Mapping to be used when constructing forms that take UUID's */
 	def uuid: Mapping[UUID] = {
-		text.verifying(validUUID).transform(UUID.fromString _, _.toString)
+		nonEmptyText.verifying(validUUID).transform(UUID.fromString _, _.toString)
 	}
 
 	/** Constraint defining a valid HTML5 date inputs value
@@ -42,7 +42,7 @@ package object forms {
 
 	/** Mapping to be used when constructing forms that use html5 date inputs */
 	def htmlDateInputToEpochSecond: Mapping[Long] = {
-		text.verifying(validHtml5Date).transform(
+		nonEmptyText.verifying(validHtml5Date).transform(
 			TimeUtils.html5StringToEpochSecond(_),
 			TimeUtils.epochSecondsToHtml5DateString _
 		)
@@ -61,7 +61,7 @@ package object forms {
 
 	/** Maps a USD currency string to the number of cents it represents */
 	def amountToCents: Mapping[Long] = {
-		text.verifying(validAmountString).transform(
+		nonEmptyText.verifying(validAmountString).transform(
 			{ str =>
 				{
 					val validAmountStringRE(d, c) = str
