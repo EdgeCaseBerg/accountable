@@ -10,7 +10,7 @@
 
 <div class="field @if(elements.hasErrors){error}">
 	<label for="@elements.id">
-		@elements.label(elements.lang)
+		@elements.label(elements.lang).toString.capitalize
 		@if(isRequired) {
 			<span class="field-required">*</span>
 		}
