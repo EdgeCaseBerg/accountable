@@ -11,6 +11,7 @@ UI allowing users to
 - list a week's expenses + summary
 - import BGI format data job/method
 - Send email of expenses listed by group each week
+- See charts of data for visual breakdown
 
 ## 0.1.0
 
