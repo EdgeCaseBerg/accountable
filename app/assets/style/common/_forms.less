@@ -1,0 +1,51 @@
+form {
+	color: @color6;
+	padding: 5px;
+	div.field {
+		&.error {
+			border-left: medium solid @color8;
+			padding-left: 5px;
+		}
+		label {
+			display: block;
+			font-weight: bold;
+		}
+		.field-required {
+			color: @color7;
+			font-weight: bold;
+		}
+		.input {
+			display: inline-block;
+			text-indent: 10px;
+			.infos {
+				font-style: italic;
+				font-weight: lighter;
+				span {
+					display: block;
+				}
+			}
+			.errors {
+				font-weight: bold;
+				color: @color7;
+				span {
+					display: block;
+				}
+			}
+		}
+
+	}
+	input, select,  {
+		border-radius: 10px;
+		padding: 5px;
+		margin: 5px;
+		border-bottom: thin solid @color3;
+		text-align: center;
+		background-color: @color1;
+	}
+	input[type=submit] {
+		min-width: 10em;
+		background-color: @color4;
+		border: thin solid @color1;
+
+	}
+}
