@@ -23,9 +23,18 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 	}
 
 	def summarizeWeeksExpenses = Action.async { implicit request =>
-		expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup.map { expensesByGroup =>
-			implicit val notifications = flash2TemplateNotification
-			Ok(views.html.expenseSummary(expensesByGroup))
+		val groupAndExpenseData = for {
+			allGroups <- expenseManagementService.listExpenseGroups
+			expensesByGroup <- expenseManagementService.listCurrentWeeksCurrentExpensesWithGroup
+		} yield (allGroups, expensesByGroup)
+
+		groupAndExpenseData.map {
+			case (allGroups, expensesByGroup) =>
+				implicit val notifications = flash2TemplateNotification
+				val summaryToDisplay = {
+					(allGroups.map(_ -> List.empty[Expense]).toMap) ++ expensesByGroup
+				}
+				Ok(views.html.expenseSummary(summaryToDisplay))
 		}.recover(withErrorPage("Could not load this weeks expenses"))
 	}
 
