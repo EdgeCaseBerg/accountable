@@ -5,10 +5,10 @@ TODO: Roadmap to features & functionality
 
 UI allowing users to
 
-- create expenses 
-- create groups 
+- create expenses ✓
+- create groups ✓
 - add/switch expenses to groups
-- list a week's expenses + summary
+- list a week's expenses + summary ✓
 - import BGI format data job/method
 - Send email of expenses listed by group each week
 - See charts of data for visual breakdown
