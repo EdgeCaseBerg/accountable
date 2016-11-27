@@ -105,7 +105,7 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 				expense <- expenseManagementService.findExpenseById(expenseId)
 			} yield {
 				implicit val notifications = flash2TemplateNotification
-				val defaultForm = ExpenseForms.changeGroupForm.bindFromRequest.discardingErrors
+				val defaultForm = ExpenseForms.changeGroupForm.bind(Map("expenseId" -> expense.expenseId.toString)).discardingErrors
 				Ok(views.html.changeGroupOfExpenseForm(expense, expenseGroups, defaultForm))
 			}
 		}
