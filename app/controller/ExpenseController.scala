@@ -3,6 +3,7 @@ package controller
 import play.api.mvc._
 import play.filters.csrf._
 import javax.inject.Inject
+import java.util.UUID
 import scala.util.control.NonFatal
 import scala.concurrent.{ ExecutionContext, Future }
 import service._
@@ -94,7 +95,23 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 		}
 	}
 
-	def changeExpensesGroup = CSRFAddToken {
+	def showChangeExpensesGroupForm(expenseId: UUID) = CSRFAddToken {
+		Action.async { implicit request =>
+			val expenseGroupsFuture = expenseManagementService.listExpenseGroups.recover {
+				case NonFatal(e) => List.empty[ExpenseGroup]
+			}.map(identity)
+			for {
+				expenseGroups <- expenseGroupsFuture
+				expense <- expenseManagementService.findExpenseById(expenseId)
+			} yield {
+				implicit val notifications = flash2TemplateNotification
+				val defaultForm = ExpenseForms.changeGroupForm.bindFromRequest.discardingErrors
+				Ok(views.html.changeGroupOfExpenseForm(expense, expenseGroups, defaultForm))
+			}
+		}
+	}
+
+	def changeExpensesGroup = CSRFCheck {
 		Action.async { implicit request =>
 			ExpenseForms.changeGroupForm.bindFromRequest.fold(
 				formWithErrors => Future.successful {

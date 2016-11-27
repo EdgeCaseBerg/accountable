@@ -4,6 +4,7 @@ GET /current/summary @controller.ExpenseController.summarizeWeeksExpenses
 
 GET /expenses/new @controller.ExpenseController.showCreateExpenseForm
 POST /expenses/create @controller.ExpenseController.createExpense
+GET /expenses/:expenseId/changegroup @controller.ExpenseController.showChangeExpensesGroupForm(expenseId: java.util.UUID)
 POST /expenses/changegroup @controller.ExpenseController.changeExpensesGroup
 
 GET /groups @controller.ExpenseController.listExpenseGroups
