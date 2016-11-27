@@ -43,13 +43,13 @@ object ExpenseForms {
 	/** Type Alias for submission for changing an expenses group
 	 *  @note Handy for form templates typing
 	 */
-	type ChangeGroupForm = (UUID, Option[UUID])
+	type ChangeGroupForm = (UUID, UUID)
 
-	/** Form for changing an expenses group, if no group is submitted the group is cleared and the expense becomes 'ungrouped' */
+	/** Form for changing an expenses group */
 	val changeGroupForm = Form[ChangeGroupForm](
 		tuple(
 			"expenseId" -> uuid,
-			"groupId" -> optional(uuid)
+			"groupId" -> uuid
 		)
 	)
 
