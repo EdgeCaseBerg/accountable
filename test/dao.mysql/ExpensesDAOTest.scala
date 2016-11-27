@@ -58,4 +58,18 @@ class ExpensesDAOTest extends testhelpers.MigratedAndCleanDatabase {
 		}
 	}
 
+	it should "find an expense by its expenseId" in {
+		val expenseId = myTestExpense.expenseId
+		whenReady(expensesDAO.findExpenseById(expenseId)) { expense =>
+			assertResult(myTestExpense)(expense)
+		}
+	}
+
+	it should "throw an exception when an ID that doesn't match an expense is used during finding" in {
+		val randomUUID = UUID.randomUUID()
+		whenReady(expensesDAO.findExpenseById(randomUUID).failed) { exception =>
+			exception shouldBe an[ExpenseDoesNotExistException]
+		}
+	}
+
 }

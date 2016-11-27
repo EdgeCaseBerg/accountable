@@ -3,6 +3,7 @@ package dao
 import models.domain._
 import scala.concurrent.Future
 import java.time.Instant
+import java.util.UUID
 
 /** Data Access Object Trait for expenses
  *
@@ -49,5 +50,11 @@ trait ExpensesDAO {
 	 *  @param A Future containing a map of ExpenseGroup to the list of expenses that occured in the same week as the instant given
 	 */
 	def listExpensesByGroupDuringWeekOf(epochInstant: Instant): Future[Map[ExpenseGroup, List[Expense]]]
+
+	/** Retrieves an expense by its ID or fails.
+	 *  @param expenseId The UUID of the Expense
+	 *  @return A future containing the expense identified by the given expenseId, if not found a failed future will be returned.
+	 */
+	def findExpenseById(expenseId: UUID): Future[Expense]
 
 }

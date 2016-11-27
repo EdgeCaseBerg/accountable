@@ -1,6 +1,7 @@
 package dao.mysql
 
 import dao._
+import dao.exceptions.ExpenseDoesNotExistException
 import models.domain._
 import utils._
 import TimeUtils.LongAsInstant
@@ -10,6 +11,7 @@ import javax.inject.Inject
 import java.time._
 import java.time.temporal.ChronoUnit.DAYS
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 import anorm._
 
 class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit executionContext: ExecutionContext) extends ExpensesDAO {
@@ -82,6 +84,21 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 				}
 			}
 			mutableMap.toMap
+		}
+	}
+
+	/** @inheritdoc
+	 */
+	def findExpenseById(expenseId: UUID): Future[Expense] = Future {
+		mysqlConnector.withReadOnlyConnection { implicit connection =>
+			val sql = SQL(
+				"""SELECT expenses.amountInCents, expenses.name, expenses.dateOccured, expenses.expenseId FROM expenses
+								 WHERE expenseId = {expenseId}
+							"""
+			).on("expenseId" -> expenseId).as(MySqlToDomainColumnParsers.expenseParser *)
+			sql.toList.headOption.fold(
+				throw new ExpenseDoesNotExistException(s"Could not find any expense by the ID ${expenseId}", null)
+			)(identity)
 		}
 	}
 
