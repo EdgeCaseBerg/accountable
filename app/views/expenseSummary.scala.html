@@ -1,6 +1,6 @@
 @import common.page
 @import utils._
-@(expensesByGroup: Map[ExpenseGroup, List[Expense]])(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
+@(expensesByGroup: Map[ExpenseGroup, List[Expense]])(implicit lang: Lang, request: RequestHeader, notifications: List[TemplateNotification] = Nil)
 
 @page("Expenses summary") {
 	<table class="summary" summary="This table shows expenses broken down by which group they are in">
@@ -36,6 +36,29 @@
 					<td>@TimeUtils.epochSecondsToHtml5DateString(expense.dateOccured)</td>
 					<td>@expense.name</td>
 					<td>$@DisplayUtils.centsToDollars(expense.amountInCents)</td>
+					<td>
+						<div class="change group">
+						
+						@helper.form(controller.routes.ExpenseController.changeExpensesGroup()) {
+							@helper.CSRF.formField
+							<input type="hidden" name="expenseId" value="@expense.expenseId">
+							@defining(
+								forms.ExpenseForms.changeGroupForm.bind(
+									Map("expenseId" -> expense.expenseId.toString, "groupId" -> group.groupId.toString)
+								).discardingErrors
+							) { formData =>
+								@helper.select(formData("groupId"), 
+									options = expensesByGroup.keys.toList.map(g => (g.groupId.toString, g.name)),
+									args = constraintsToArgs(formData("groupId"),
+										'_label -> "Change Group?",
+										'_showConstraints -> false
+									):_*
+								)
+							}
+							<input type="submit" value="Update">
+						}
+						</div>
+					</td>
 				</tr>
 			}
 		</tbody>
