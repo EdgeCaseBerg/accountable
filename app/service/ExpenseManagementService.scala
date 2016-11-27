@@ -78,4 +78,11 @@ class ExpenseManagementService @Inject() (expenseGroupsDAO: ExpenseGroupsDAO, ex
 		}
 	}
 
+	/** Find an expense by its ID
+	 *  @param expenseId The ID of the expense to be retrieved
+	 */
+	def findExpenseById(expenseId: UUID): Future[Expense] = {
+		expensesDAO.findExpenseById(expenseId)
+	}
+
 }
