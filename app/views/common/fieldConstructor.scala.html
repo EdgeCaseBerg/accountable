@@ -8,7 +8,11 @@
 	elements.errors(elements.lang).exists(_ == Messages("error.required"))
 }
 
-<div class="field @if(elements.hasErrors){error}">
+@isHidden = @{
+	elements.args.get('_hidden).map(_ == true).fold(false)(identity)
+}
+
+<div class="field @if(elements.hasErrors){error} @if(isHidden){hidden}">
 	<label for="@elements.id">
 		@elements.label(elements.lang).toString.capitalize
 		@if(isRequired) {

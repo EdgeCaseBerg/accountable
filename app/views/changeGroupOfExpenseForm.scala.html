@@ -10,15 +10,13 @@
 		@helper.CSRF.formField
 		@helper.inputText(form("expenseId"),
 			'type -> "hidden",
-			'_showConstraints -> false,
-			'_label -> ""
+			'_hidden -> true
 		)
 		<p>
-			Change the expense with name "@expenseToChange.name" to be in which group?
 			@helper.select(form("groupId"), 
 				options = possibleGroups.map(g => (g.groupId.toString, g.name.capitalize)),
 				args = constraintsToArgs(form("groupId"),
-					'_label -> "New Group?",
+					'_label -> s"Change the expense with name '${expenseToChange.name}' to be in which group?",
 					'_showConstraints -> false
 				):_*
 			)
