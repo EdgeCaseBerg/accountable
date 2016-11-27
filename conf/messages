@@ -4,7 +4,9 @@ forms.invalid.amount = ''{0}'' is not a valid amount
 
 views.error=An unknown error occured: ''{0}''
 views.error.groupNotFound=Group with ID ''{0}'' was not found, this issue may be temporary please try again
+views.error.expense.changegroup.formbind="Could not understand the request to change groups"
 
+views.success.expense.changegroup=Successfully switched expense's group
 views.success.expense.create=Successfully created expense
 
 views.tmp.grouploadfail=Could not load expense groups, please refresh the page to try again

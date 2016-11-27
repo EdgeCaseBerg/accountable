@@ -8,6 +8,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import service._
 import models.domain._
 import models.view._
+import dao.exceptions._
 import utils.TimeUtils
 import forms.{ ExpenseForms, ExpenseGroupForms }
 
@@ -52,6 +53,38 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 					Ok(views.html.createForm(Nil, defaultForm))
 				}
 			}
+		}
+	}
+
+	def changeExpensesGroup = CSRFAddToken {
+		Action.async { implicit request =>
+			ExpenseForms.changeGroupForm.bindFromRequest.fold(
+				formWithErrors => Future.successful {
+					Redirect(routes.ExpenseController.summarizeWeeksExpenses()).flashing("error" -> "views.error.expense.changegroup.formbind")
+				},
+				boundForm => {
+					val (expenseId, groupIdToChangeTo) = boundForm
+
+					val expenseGroupFuture = expenseManagementService.listExpenseGroups.recover {
+						case NonFatal(e) => List.empty[ExpenseGroup]
+					}.map { expenseGroups =>
+						expenseGroups.find(_.groupId == groupIdToChangeTo).fold(
+							throw new ExpenseGroupDoesNotExistException(s"No group by the id ${groupIdToChangeTo} could be found.", null)
+						)(identity)
+					}
+
+					val expenseSwitchedFuture = for {
+						expense <- expenseManagementService.findExpenseById(expenseId)
+						expenseGroup <- expenseGroupFuture
+						_ <- expenseManagementService.createExpenseAndAddToGroup(expense, expenseGroup)
+					} yield (expense, expenseGroup)
+
+					expenseSwitchedFuture.map {
+						case (expense, expenseGroup) =>
+							Redirect(routes.ExpenseController.summarizeWeeksExpenses()).flashing("info" -> "views.success.expense.changegroup")
+					}.recover(withErrorPage("Could not switch the expenses group."))
+				}
+			)
 		}
 	}
 
