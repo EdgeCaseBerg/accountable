@@ -57,4 +57,9 @@ trait ExpensesDAO {
 	 */
 	def findExpenseById(expenseId: UUID): Future[Expense]
 
+	/** Retrieve a list of week's one could request a summary or expenses for
+	 *  @return A future list of Instances each being the start of an expense week
+	 */
+	def listOfAvailableWeeksWithExpenses(): Future[Seq[Instant]]
+
 }

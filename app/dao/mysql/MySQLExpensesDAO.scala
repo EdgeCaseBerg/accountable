@@ -102,4 +102,26 @@ class MySQLExpensesDAO @Inject() (mysqlConnector: MySQLConnector)(implicit execu
 		}
 	}
 
+	/** @inheritdoc
+	 */
+	def listOfAvailableWeeksWithExpenses(): Future[Seq[Instant]] = Future {
+		mysqlConnector.withReadOnlyConnection { implicit connection =>
+			val sql = SQL(
+				"""SELECT MIN(dateOccured) as min FROM expenses"""
+			).as(SqlParser.date("min") map { case m => m.getTime / 1000 } *)
+			sql.toList.headOption.fold(Seq(Instant.now())) {
+				case min =>
+					/** Create a list, one per week, from the minimum to the maximum */
+					val startWeek = TimeUtils.getWeekOf(min.toInstant)
+					val thisWeek = TimeUtils.getWeekOf(Instant.now())
+					val listBuffer = collection.mutable.ListBuffer(startWeek)
+					var week = startWeek
+					while (thisWeek.isAfter(week)) {
+						week = week.plus(7, DAYS)
+						listBuffer += week
+					}
+					listBuffer.toList
+			}
+		}
+	}
 }

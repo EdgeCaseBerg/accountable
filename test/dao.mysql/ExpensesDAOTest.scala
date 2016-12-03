@@ -2,9 +2,12 @@ package dao.mysql
 
 import dao.exceptions._
 import models.domain._
+import utils.TimeUtils
+import TimeUtils.LongAsInstant
 
 import org.scalatest.{ FlatSpec, Matchers }
 import java.time.Instant
+import java.time.temporal.ChronoUnit.DAYS
 import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -69,6 +72,15 @@ class ExpensesDAOTest extends testhelpers.MigratedAndCleanDatabase {
 		val randomUUID = UUID.randomUUID()
 		whenReady(expensesDAO.findExpenseById(randomUUID).failed) { exception =>
 			exception shouldBe an[ExpenseDoesNotExistException]
+		}
+	}
+
+	it should "retrieve a list of dates for each week from the earliest expense to now" in {
+		whenReady(expensesDAO.listOfAvailableWeeksWithExpenses()) { listOfInstants =>
+			val earliestWeek = utils.TimeUtils.getWeekOf(1435449600.toInstant)
+			val numberOfWeeksSinceEarliest = 1 + earliestWeek.until(TimeUtils.getWeekOf(Instant.now()), DAYS) / 7
+			println(listOfInstants)
+			assertResult(numberOfWeeksSinceEarliest)(listOfInstants.size)
 		}
 	}
 
