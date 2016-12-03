@@ -85,4 +85,21 @@ class ExpenseManagementService @Inject() (expenseGroupsDAO: ExpenseGroupsDAO, ex
 		expensesDAO.findExpenseById(expenseId)
 	}
 
+	/** Get list of times to retrieve expenses by weeks at a time*/
+	def listAvailableWeeks(): Future[Seq[Instant]] = expensesDAO.listOfAvailableWeeksWithExpenses()
+
+	/** List the expenses for a given week
+	 *  @param instant An instant within a the week to have data retrieved for
+	 */
+	def listWeeksExpenses(instant: Instant): Future[List[Expense]] = {
+		expensesDAO.listExpensesDuringWeekOf(instant)
+	}
+
+	/** List the expenses, grouped by their ExpenseGroup, for a given week
+	 *  @param instant An instant within a the week to have data retrieved for
+	 */
+	def listWeeksExpensesWithGroups(instant: Instant): Future[Map[ExpenseGroup, List[Expense]]] = {
+		expensesDAO.listExpensesByGroupDuringWeekOf(instant)
+	}
+
 }
