@@ -1,0 +1,37 @@
+@import common.page
+@import utils._
+@import java.time.Instant
+@(availableWeeks: Seq[Instant])(implicit lang: Lang, notifications: List[TemplateNotification] = Nil)
+
+@page("Choose a week to see expenses for") {
+	<header>
+		<h2>Select a previous week to view expenses for</h2>
+	</header>
+	<dl class="year-list">
+	@availableWeeks.groupBy(instant => TimeUtils.getYearOfInstant(instant)).toList.sortBy(_._1).reverse.map { case (year, instancesByYear) => 
+		<dt>
+			@year
+		</dt>
+		<dd>
+			<ul class="month-list">
+			@instancesByYear.groupBy(instant => TimeUtils.getMonthOfInstant(instant)).toList.sortBy(_._1).map { case (month, instancesByMonth) => 
+				<li>
+					@* .head should be safe here since to group by we had to have at least one with this month *@
+					@TimeUtils.getMonthOfInstantAsString(instancesByMonth.head)
+					<ul>
+						@instancesByMonth.map { weekInstance =>
+						<li>
+							@** TODO: Add link to controller method to be made to display expense summary by week *@
+							<a href="">
+								@TimeUtils.epochSecondsToHtml5DateString(weekInstance.getEpochSecond())
+						</a>
+						</li>
+						}
+					</ul>
+				</li>	
+			}
+			</ul>
+		</dd>
+	}
+	</dl>
+}

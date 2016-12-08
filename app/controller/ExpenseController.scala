@@ -176,4 +176,10 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 		}
 	}
 
+	def showWeekSelection = Action.async { implicit request =>
+		expenseManagementService.listAvailableWeeks().map { weeks =>
+			Ok(views.html.selectWeeks(weeks))
+		}.recover(withErrorPage("Could not load available weeks"))
+	}
+
 }

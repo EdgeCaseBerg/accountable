@@ -2,10 +2,14 @@
 GET /current/expenses @controller.ExpenseController.listCurrentExpenses
 GET /current/summary @controller.ExpenseController.summarizeWeeksExpenses
 
+
 GET /expenses/new @controller.ExpenseController.showCreateExpenseForm
 POST /expenses/create @controller.ExpenseController.createExpense
-GET /expenses/:expenseId/changegroup @controller.ExpenseController.showChangeExpensesGroupForm(expenseId: java.util.UUID)
+GET /expenses/selectWeek @controller.ExpenseController.showWeekSelection
 POST /expenses/changegroup @controller.ExpenseController.changeExpensesGroup
+
+GET /expenses/:expenseId/changegroup @controller.ExpenseController.showChangeExpensesGroupForm(expenseId: java.util.UUID)
+
 
 GET /groups @controller.ExpenseController.listExpenseGroups
 GET /groups/new @controller.ExpenseController.showCreateExpenseGroupForm

@@ -26,6 +26,21 @@ object TimeUtils {
 		Instant.from(startOfTheWeek)
 	}
 
+	def getYearOfInstant(epochInstant: Instant): Int = {
+		val currentLocalDateTime: LocalDate = LocalDateTime.ofInstant(epochInstant, ZoneId.of("UTC")).toLocalDate()
+		DateTimeFormatter.ofPattern("yyyy").format(currentLocalDateTime).toInt
+	}
+
+	def getMonthOfInstant(epochInstant: Instant): Int = {
+		val currentLocalDateTime: LocalDate = LocalDateTime.ofInstant(epochInstant, ZoneId.of("UTC")).toLocalDate()
+		DateTimeFormatter.ofPattern("MM").format(currentLocalDateTime).toInt
+	}
+
+	def getMonthOfInstantAsString(epochInstant: Instant): String = {
+		val currentLocalDateTime: LocalDate = LocalDateTime.ofInstant(epochInstant, ZoneId.of("UTC")).toLocalDate()
+		DateTimeFormatter.ofPattern("MMMM").format(currentLocalDateTime)
+	}
+
 	/** Helper to quickly get the current epoch second */
 	def now(): Long = {
 		Instant.now().getEpochSecond()
