@@ -10,6 +10,10 @@
 			<th>Amount Spent</th>
 		</thead>
 		<tbody>
+			<tr>
+				<th>Total:</th>
+				<th colspan="2">$@DisplayUtils.centsToDollars(expenses.map(_.amountInCents).sum)</th>
+			</tr>
 			@if(expenses.isEmpty) {
 				<tr>
 					<td colspan="3">No expenses exist yet</td>
