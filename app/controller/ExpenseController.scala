@@ -4,6 +4,7 @@ import play.api.mvc._
 import play.filters.csrf._
 import javax.inject.Inject
 import java.util.UUID
+import java.time.Instant
 import scala.util.control.NonFatal
 import scala.concurrent.{ ExecutionContext, Future }
 import service._
@@ -38,6 +39,22 @@ class ExpenseController @Inject() (expenseManagementService: ExpenseManagementSe
 				}
 				Ok(views.html.expenseSummary(summaryToDisplay))
 		}.recover(withErrorPage("Could not load this weeks expenses"))
+	}
+
+	def summarizeSelectedWeeksExpenses(instantInWeek: Instant) = Action.async { implicit request =>
+		val groupAndExpenseData = for {
+			allGroups <- expenseManagementService.listExpenseGroups
+			expensesByGroup <- expenseManagementService.listWeeksExpensesWithGroups(instantInWeek)
+		} yield (allGroups, expensesByGroup)
+
+		groupAndExpenseData.map {
+			case (allGroups, expensesByGroup) =>
+				implicit val notifications = flash2TemplateNotification
+				val summaryToDisplay = {
+					(allGroups.map(_ -> List.empty[Expense]).toMap) ++ expensesByGroup
+				}
+				Ok(views.html.expenseSummary(summaryToDisplay))
+		}.recover(withErrorPage("Could not load data to display for week summary"))
 	}
 
 	def showCreateExpenseForm = CSRFAddToken {

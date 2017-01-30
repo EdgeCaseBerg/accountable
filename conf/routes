@@ -6,6 +6,8 @@ GET /current/summary @controller.ExpenseController.summarizeWeeksExpenses
 GET /expenses/new @controller.ExpenseController.showCreateExpenseForm
 POST /expenses/create @controller.ExpenseController.createExpense
 GET /expenses/selectWeek @controller.ExpenseController.showWeekSelection
+GET /expenses/selectWeek/:instant @controller.ExpenseController.summarizeSelectedWeeksExpenses(instant: java.time.Instant)
+
 POST /expenses/changegroup @controller.ExpenseController.changeExpensesGroup
 
 GET /expenses/:expenseId/changegroup @controller.ExpenseController.showChangeExpensesGroupForm(expenseId: java.util.UUID)

@@ -21,8 +21,7 @@
 					<ul>
 						@instancesByMonth.map { weekInstance =>
 						<li>
-							@** TODO: Add link to controller method to be made to display expense summary by week *@
-							<a href="">
+							<a href="@controller.routes.ExpenseController.summarizeSelectedWeeksExpenses(weekInstance)">
 								@TimeUtils.epochSecondsToHtml5DateString(weekInstance.getEpochSecond())
 						</a>
 						</li>

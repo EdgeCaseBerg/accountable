@@ -1,4 +1,4 @@
-import play.PlayImport.PlayKeys.playRunHooks
+import play.PlayImport.PlayKeys.routesImport
 import scalariform.formatter.preferences._
 import com.typesafe.config._
 
@@ -58,11 +58,16 @@ javaOptions in Runtime += "-Duser.timezone=UTC"
 
 scalacOptions ++= Seq("-feature")
 
+routesImport ++= Seq(
+	"support.RouteSupport._"
+)
+
 TwirlKeys.templateImports ++= Seq(
 	"models.domain._",
 	"models.view._",
 	"play.api.i18n.{Messages, Lang}",
-	"models.view.ImplicitFieldConstructorProvider._"
+	"models.view.ImplicitFieldConstructorProvider._",
+	"support.RouteSupport._"
 )
 
 includeFilter in (Assets, LessKeys.less) := "*.less"
