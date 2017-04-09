@@ -32,6 +32,18 @@ object ImportUtils {
 	 *  @see {@link https://github.com/EdgeCaseBerg/BGI/blob/master/src/util/ctl.c#L455 Method from BGI that updates accounts}
 	 *  @return the parsed ExpenseGroup or the exception preventing parsing in an Either.
 	 */
-	def expenseGroupFromBGIString(accountString: String): Either[Throwable, ExpenseGroup] = ???
+	def expenseGroupFromBGIString(accountString: String): Either[Throwable, ExpenseGroup] = {
+		val accountScanner: Scanner = new Scanner(accountString)
+		try {
+			// Ignore the account number
+			accountScanner.nextLong()
+			val name = accountScanner.next("[^0-9]+".r.pattern)
+			Right(ExpenseGroup(name))
+		} catch {
+			case e: Throwable => Left(e)
+		} finally {
+			accountScanner.close()
+		}
+	}
 
 }
