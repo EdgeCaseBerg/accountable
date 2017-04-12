@@ -46,4 +46,9 @@ object ImportUtils {
 		}
 	}
 
+	/** Expected names for BGI account files have spaces replaced with -
+	 *  @see {@link https://github.com/EdgeCaseBerg/BGI/blob/master/src/util/ctl.c#L12 Method used to generate account file names from the file}
+	 */
+	def nameToBGIFileName(string: String) = string.replace(" ", "-")
+
 }
