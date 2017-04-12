@@ -37,7 +37,7 @@ import java.io.File
  *  with the work being pulled
  *
  */
-package object `import` {
+package object imports {
 	object ManagerWorkerProtocol {
 
 		/** Message sent from outside the system to the manager to start an import */
