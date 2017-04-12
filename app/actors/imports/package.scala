@@ -57,16 +57,10 @@ package object imports {
 		sealed trait ManagerToWorkerMessage
 
 		/** Message used by the manager to indicate to workers that accounts data is available for pulling */
-		case object AnnounceAccountsDataAvailable extends ManagerToWorkerMessage
-
-		/** Message used by the manager to indicate to workers that line item data is available for pulling */
-		case object AnnounceLineItemDataAvailable extends ManagerToWorkerMessage
+		case object AnnounceWorkAvailable extends ManagerToWorkerMessage
 
 		/** Message used by the manager to provide a worker with part of the string data from an accounts file */
-		case class ImportExpenseGroup(accountStringFromFile: String) extends ManagerToWorkerMessage
-
-		/** Message used by the manager to provide a worker with part of the string data from a line items file */
-		case class ImportExpense(lineItemStringFromFile: String) extends ManagerToWorkerMessage
+		case class ImportExpenseGroup(expenseGroup: ExpenseGroup, dataFile: File) extends ManagerToWorkerMessage
 
 		/** Sealed trait to be extended by messages that the manager uses internally to manage its affairs */
 		sealed trait InternalManagerMessage
@@ -77,17 +71,14 @@ package object imports {
 		/** Message used by the manager to begin reading data from an accounts file */
 		case class ReadAccountsFile(file: File) extends InternalManagerMessage
 
-		/** Message used by the manager to begin reading data from a line item file */
-		case class ReadLineItemFile(file: File) extends InternalManagerMessage
+		/** Message used by the manager to indicate the account names found in the accounts index */
+		case class AccountsFileData(accountsToBeMade: List[ExpenseGroup]) extends InternalManagerMessage
 
 		/** Sealed trait to be extended by messages that the worker sends to the manager */
 		sealed trait WorkerToManagerMessage
 
 		/** Message used by the worker to pull account data from the manager */
-		case class RequestExpenseGroup(workerRef: ActorRef) extends WorkerToManagerMessage
-
-		/** Message used by the worker to pull line item data from the manager */
-		case class RequestExpense(workerRef: ActorRef) extends WorkerToManagerMessage
+		case class RequestDataToImport(workerRef: ActorRef) extends WorkerToManagerMessage
 
 		/** Sealed trait to be extended by messages that the worker uses internally to manage its affairs */
 		sealed trait InternalWorkerMessage
