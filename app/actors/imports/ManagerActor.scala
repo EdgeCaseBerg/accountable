@@ -29,18 +29,19 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 	var importInProgress: Map[ExpenseGroup, (ActorRef, String)] = Map.empty
 	var groupsFailedToBeMade: Map[ExpenseGroup, String] = Map.empty
 	var groupsSuccessfullyMade: Map[ExpenseGroup, String] = Map.empty
-	var currentJobStatus = "Idle" //TODO: Consider something with a little more context
+	var currentOverallStatus = "Idle" //TODO: Consider something with a little more context
+	var jobStatus: JobStatus = Idle
 
 	/** When we are idle, we're ready to start a job or return a status */
 	def idle: Receive = {
 		case BeginImport(directory) =>
 			sender() ! ImportStarted
 			if (directory.isDirectory()) {
-				currentJobStatus = "Reading directory..."
+				currentOverallStatus = "Reading directory..."
 				self ! ReadDirectory
 				context.become(readingDirectory(directory))
 			} else {
-				currentJobStatus = "Failed to start job, File given as import directory is not a directory!"
+				currentOverallStatus = "Failed to start job, File given as import directory is not a directory!"
 			}
 	}
 
@@ -49,11 +50,11 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 		case ReadDirectory =>
 			val accountsFileInList = directory.listFiles(new AccountsFileFilter)
 			if (accountsFileInList.isEmpty) {
-				currentJobStatus = "Cannot import, directory does not contain an accounts index"
+				currentOverallStatus = "Cannot import, directory does not contain an accounts index"
 				context.unbecome() // switch back to idle
 			} else {
 				val accountsFile = accountsFileInList.head
-				currentJobStatus = "Reading accounts file..."
+				currentOverallStatus = "Reading accounts file..."
 				self ! ReadAccountsFile(accountsFile)
 			}
 		case ReadAccountsFile(accountsFile) =>
@@ -63,10 +64,10 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 				val eithers = linesInFile.map(ImportUtils.expenseGroupFromBGIString(_)).toList
 				val accountsFileValid = !eithers.map(_.isRight).exists(_ == false)
 				if (accountsFileValid) {
-					currentJobStatus = "Preparing to being account creation"
+					currentOverallStatus = "Preparing to being account creation"
 					self ! AccountsFileData(eithers.map(_.right.get))
 				} else {
-					currentJobStatus = "Invalid accounts file, aborting job!"
+					currentOverallStatus = "Invalid accounts file, aborting job!"
 					context.unbecome() // switch back to idle
 				}
 				()
@@ -86,10 +87,10 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 					case (expenseGroup, None) => groupsFailedToBeMade += expenseGroup -> "Data file not found in directory"
 				}
 			if (accountsToImport.isEmpty) {
-				currentJobStatus = "No accounts to import!"
+				currentOverallStatus = "No accounts to import!"
 				context.unbecome()
 			} else {
-				currentJobStatus = "Accounts data read, informing workers..."
+				currentOverallStatus = "Accounts data read, informing workers..."
 				workersSelection ! AnnounceWorkAvailable
 				context.become(readyForWorkers)
 			}
@@ -97,15 +98,16 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 
 	def readyForWorkers: Receive = {
 		case RequestDataToImport(workerRef) =>
-			currentJobStatus = "Handing work to workers"
+			currentOverallStatus = "Handing work to workers"
 			/* Take something from the todo list and give it to the worker */
 			if (accountsToImport.nonEmpty) {
 				val (expenseGroup, file) = accountsToImport.head
 				accountsToImport = accountsToImport.tail
-				workerRef ! ImportExpenseGroup(expenseGroup, file)
-				importInProgress += (expenseGroup -> (workerRef, "Starting import..."))
 				/* Begin watching the worker in case it dies during the import and we need to move an inProgress back to todo */
 				context.watch(workerRef)
+				workerRef ! ImportExpenseGroup(expenseGroup, file)
+				importInProgress += (expenseGroup -> (workerRef, "Starting import..."))
+
 			} else {
 				context.unbecome() // transition back to idle
 			}

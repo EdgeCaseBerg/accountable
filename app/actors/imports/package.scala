@@ -40,6 +40,26 @@ import java.io.File
 package object imports {
 	object ManagerWorkerProtocol {
 
+		/** Parent trait for discriminator for the current job state */
+		sealed trait JobStatus
+		/** Indicator that there is no job in progress and one may begin */
+		case object Idle extends JobStatus
+		/** Indicator that a job is in progress */
+		case object InProgress extends JobStatus
+		/** Indicator that the job has errored during execution */
+		case object Error extends JobStatus
+
+		/** Class indicating what the current status is.
+		 */
+		case class CurrentStatus(
+			todo: List[String],
+			inProgress: Map[String, String],
+			failed: Map[String, String],
+			success: Map[String, String],
+			overallStatus: String,
+			jobStatus: JobStatus
+		)
+
 		/** Message sent from outside the system to the manager to start an import */
 		case class BeginImport(directory: File)
 
@@ -50,6 +70,9 @@ package object imports {
 		 *  @param status the status of the import, success or failure.
 		 */
 		case class ImportFinished(status: String)
+
+		/** Request the current job status */
+		case object RequestStatus
 
 		// TODO: Determine structure for status updates
 
