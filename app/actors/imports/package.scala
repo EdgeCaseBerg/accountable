@@ -103,6 +103,15 @@ package object imports {
 		/** Message used by the worker to pull account data from the manager */
 		case class RequestDataToImport(workerRef: ActorRef) extends WorkerToManagerMessage
 
+		/** Message used by the worker to update the manager with what its doing */
+		case class InformManagerOfUpdate(expenseGroup: ExpenseGroup, newStatus: String)
+
+		/** Message used by the worker to update the manager of a failure */
+		case class InformManagerOfFailure(expenseGroup: ExpenseGroup, reason: String)
+
+		/** Message used by the worker to inform the manager of the success of creating a group and its line items */
+		case class InformManagerOfSuccess(expenseGroup: ExpenseGroup, newStatus: String)
+
 		/** Sealed trait to be extended by messages that the worker uses internally to manage its affairs */
 		sealed trait InternalWorkerMessage
 

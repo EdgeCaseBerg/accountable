@@ -32,6 +32,27 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 	var currentOverallStatus = "Idle" //TODO: Consider something with a little more context
 	var jobStatus: JobStatus = Idle
 
+	def hasNoMoreWork = {
+		importInProgress.isEmpty && accountsToImport.isEmpty
+	}
+
+	def currentStatus = {
+		CurrentStatus(
+			todo = accountsToImport.map(_._1.name).toList,
+			inProgress = importInProgress.map {
+				case (expenseGroup, (ref, status)) => expenseGroup.name -> status
+			},
+			failed = groupsFailedToBeMade.map {
+				case (expenseGroup, status) => expenseGroup.name -> status
+			},
+			success = groupsSuccessfullyMade.map {
+				case (expenseGroup, status) => expenseGroup.name -> status
+			},
+			overallStatus = currentOverallStatus,
+			jobStatus = jobStatus
+		)
+	}
+
 	/** When we are idle, we're ready to start a job or return a status */
 	def idle: Receive = {
 		case BeginImport(directory) =>
@@ -39,10 +60,12 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 			if (directory.isDirectory()) {
 				currentOverallStatus = "Reading directory..."
 				self ! ReadDirectory
+				jobStatus = InProgress
 				context.become(readingDirectory(directory))
 			} else {
 				currentOverallStatus = "Failed to start job, File given as import directory is not a directory!"
 			}
+		case RequestStatus => sender() ! currentStatus
 	}
 
 	/** When we are reading a directory, we're preparing the data in a directory for import */
@@ -51,6 +74,7 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 			val accountsFileInList = directory.listFiles(new AccountsFileFilter)
 			if (accountsFileInList.isEmpty) {
 				currentOverallStatus = "Cannot import, directory does not contain an accounts index"
+				jobStatus = Error
 				context.unbecome() // switch back to idle
 			} else {
 				val accountsFile = accountsFileInList.head
@@ -68,6 +92,7 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 					self ! AccountsFileData(eithers.map(_.right.get))
 				} else {
 					currentOverallStatus = "Invalid accounts file, aborting job!"
+					jobStatus = Error
 					context.unbecome() // switch back to idle
 				}
 				()
@@ -88,12 +113,14 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 				}
 			if (accountsToImport.isEmpty) {
 				currentOverallStatus = "No accounts to import!"
+				jobStatus = Idle
 				context.unbecome()
 			} else {
 				currentOverallStatus = "Accounts data read, informing workers..."
 				workersSelection ! AnnounceWorkAvailable
 				context.become(readyForWorkers)
 			}
+		case RequestStatus => sender() ! currentStatus
 	}
 
 	def readyForWorkers: Receive = {
@@ -109,6 +136,7 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 				importInProgress += (expenseGroup -> (workerRef, "Starting import..."))
 
 			} else {
+				jobStatus = Error
 				context.unbecome() // transition back to idle
 			}
 		case Terminated(subject) =>
@@ -121,7 +149,35 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 					groupsFailedToBeMade += (expenseGroup -> "Worker importing group unexpectedly terminated")
 					importInProgress -= expenseGroup
 			}
-		// TODO: Write the rest of these (need to determine status update structure)
+		case RequestStatus => sender() ! currentStatus
+		case InformManagerOfUpdate(expenseGroup, newStatus) =>
+			importInProgress.get(expenseGroup).map {
+				case (workerRef, _) =>
+					importInProgress += expenseGroup -> (workerRef, newStatus)
+			}
+		case InformManagerOfFailure(expenseGroup, reason) =>
+			importInProgress.get(expenseGroup).map {
+				case (workerRef, _) =>
+					context.unwatch(workerRef)
+					importInProgress -= expenseGroup
+			}
+			groupsFailedToBeMade += expenseGroup -> reason
+			if (hasNoMoreWork) {
+				jobStatus = Idle
+				context.unbecome()
+			}
+		case InformManagerOfSuccess(expenseGroup, newStatus) =>
+			importInProgress.get(expenseGroup).map {
+				case (workerRef, _) =>
+					context.unwatch(workerRef)
+					importInProgress -= expenseGroup
+			}
+			groupsSuccessfullyMade += expenseGroup -> newStatus
+			if (hasNoMoreWork) {
+				jobStatus = Idle
+				context.unbecome()
+			}
+
 	}
 
 	def receive = idle
