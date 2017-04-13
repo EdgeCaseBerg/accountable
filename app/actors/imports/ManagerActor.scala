@@ -29,7 +29,7 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 	var importInProgress: Map[ExpenseGroup, (ActorRef, String)] = Map.empty
 	var groupsFailedToBeMade: Map[ExpenseGroup, String] = Map.empty
 	var groupsSuccessfullyMade: Map[ExpenseGroup, String] = Map.empty
-	var currentOverallStatus = "Idle" //TODO: Consider something with a little more context
+	var currentOverallStatus = "Idle" 
 	var jobStatus: JobStatus = Idle
 
 	def hasNoMoreWork = {
