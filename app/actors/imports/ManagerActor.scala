@@ -88,7 +88,7 @@ class ManagerActor(workersSelection: ActorSelection) extends Actor {
 				val eithers = linesInFile.map(ImportUtils.expenseGroupFromBGIString(_)).toList
 				val accountsFileValid = !eithers.map(_.isRight).exists(_ == false)
 				if (accountsFileValid) {
-					currentOverallStatus = "Preparing to being account creation"
+					currentOverallStatus = "Preparing to begin account creation"
 					self ! AccountsFileData(eithers.map(_.right.get))
 				} else {
 					currentOverallStatus = "Invalid accounts file, aborting job!"
